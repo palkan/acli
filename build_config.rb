@@ -22,6 +22,8 @@ MRuby::Build.new do |conf|
       cc.flags << [ENV['CFLAGS'] || %w(-fPIC -DHAVE_ARPA_INET_H)]
       cc.include_paths << %(/root/wslay/lib)
     end
+
+    linker.libraries << %w(ssl crypto)
   end
 
   gem_config(conf)
