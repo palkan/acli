@@ -67,3 +67,18 @@ desc "cleanup"
 task :clean do
   sh "rake deep_clean"
 end
+
+desc "clean host build without deleting gems"
+task :host_clean do
+  sh "rm -rf #{File.join(mruby_root, "build", "host")}"
+end
+
+desc "run build"
+task run: :default do
+  exec File.join(mruby_root, "bin", APP_NAME)
+end
+
+desc "run mirb"
+task irb: :default do
+  exec File.join(mruby_root, "bin", "mirb")
+end
