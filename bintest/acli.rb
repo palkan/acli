@@ -2,11 +2,11 @@ require "open3"
 
 BIN_PATH = File.join(File.dirname(__FILE__), "../mruby/bin/acli")
 
-assert("hello") do
-  output, status = Open3.capture2(BIN_PATH)
+assert("with invalid url") do
+  output, status = Open3.capture2(BIN_PATH, "-u", "localhost:0:1:2")
 
-  assert_true status.success?, "Process did not exit cleanly"
-  assert_include output, "Hello World"
+  assert_false status.success?, "Process exited cleanly"
+  assert_include output, "Error: "
 end
 
 assert("version") do

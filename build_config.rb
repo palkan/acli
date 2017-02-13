@@ -8,16 +8,15 @@ end
 MRuby::Build.new do |conf|
   toolchain :clang
 
-  # conf.enable_bintest
-  # conf.enable_debug
-  # conf.enable_test
+  conf.enable_bintest
+  conf.enable_debug
+  conf.enable_test
 
   # C compiler settings
   conf.cc do |cc|
     if RUBY_PLATFORM =~ /darwin/i
       cc.include_paths << %w(/usr/local/include /usr/local/opt/openssl/include)
       linker.library_paths << %w(/usr/local/lib /usr/local/opt/openssl/lib)
-
     else
       cc.flags << [ENV['CFLAGS'] || %w(-fPIC -DHAVE_ARPA_INET_H)]
       cc.include_paths << %(/root/wslay/lib)
@@ -59,6 +58,12 @@ end
 if build_targets.include?("linux-i686")
   MRuby::CrossBuild.new("i686-pc-linux-gnu") do |conf|
     toolchain :gcc
+
+    # C compiler settings
+    conf.cc do |cc|
+      cc.flags << [ENV['CFLAGS'] || %w(-fPIC -DHAVE_ARPA_INET_H)]
+      cc.include_paths << %(/root/wslay/lib)
+    end
 
     [conf.cc, conf.cxx, conf.linker].each do |cc|
       cc.flags << "-m32"
