@@ -1,4 +1,5 @@
 require "open3"
+require_relative "../mrblib/acli/version"
 
 BIN_PATH = File.join(File.dirname(__FILE__), "../mruby/bin/acli")
 
@@ -13,7 +14,7 @@ assert("version") do
   output, status = Open3.capture2(BIN_PATH, "-v")
 
   assert_true status.success?, "Process did not exit cleanly"
-  assert_include output, "v0.0.1"
+  assert_include output, "v#{Acli::VERSION}"
 end
 
 assert("help") do
