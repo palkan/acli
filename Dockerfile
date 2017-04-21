@@ -57,13 +57,13 @@ RUN ./configure --prefix=/usr
 RUN make
 
 # install libressl-portable
-WORKDIR /root
-RUN git clone https://github.com/libressl-portable/portable
-WORKDIR /root/portable
-RUN ./autogen.sh
-RUN ./configure --prefix=/usr
-RUN make && make check
-RUN make install
+# WORKDIR /root
+# RUN git clone https://github.com/libressl-portable/portable
+# WORKDIR /root/portable
+# RUN ./autogen.sh
+# RUN ./configure --prefix=/usr
+# RUN make && make check
+# RUN make install
 
 # install ruby
 RUN mkdir -p /opt/ruby-2.2.2/ && \
@@ -89,3 +89,5 @@ RUN cd /tmp && wget https://launchpad.net/ubuntu/+archive/primary/+files/msitool
 
 # Add pry-byebug to debug build process
 RUN gem install pry-byebug
+
+WORKDIR /home/mruby/code

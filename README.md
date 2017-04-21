@@ -1,3 +1,5 @@
+[![Build Status](https://travis-ci.org/palkan/acli.svg?branch=master)](https://travis-ci.org/palkan/acli)
+
 # Action Cable CLI
 
 ACLI is Action Cable command line interface written in [mRuby](http://mruby.org).

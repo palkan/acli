@@ -1,0 +1,42 @@
+sudo: false
+addons:
+  apt:
+    packages:
+      - bison
+      - automake
+      - build-essential
+      - git
+      - python-sphinx
+      - libssl-dev
+      - libtool
+      - libxml2-dev
+      - libyaml-dev
+      - llvm-dev
+      - make
+      - wget
+      - xz-utils
+      - zlib1g-dev
+language: c
+compiler:
+  - clang
+  - gcc
+
+cache:
+  apt: true
+  directories:
+  - $HOME/libsodium
+  - $HOME/wslay
+
+env:
+  - MRUBY_VERSION=1.2.0
+  - MRUBY_VERSION=master
+
+install:
+  - ./travis-install-libsodium.sh
+  - ./travis-install-wslay.sh
+  - export PKG_CONFIG_PATH=$HOME/libsodium/lib/pkgconfig:$HOME/wslay:$PKG_CONFIG_PATH
+  - export LD_LIBRARY_PATH=$HOME/libsodium/lib:$HOME/wslay/lib:$LD_LIBRARY_PATH
+
+script:
+  - MRUBY_CONFIG=build_config_travis.rb rake clean
+  - MRUBY_CONFIG=build_config_travis.rb rake test
