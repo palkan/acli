@@ -5,6 +5,19 @@ def gem_config(conf)
   conf.gem(File.expand_path(File.dirname(__FILE__)))
 end
 
+build_targets = ENV.fetch("BUILD_TARGET", "").split(",")
+
+if build_targets == %w(all)
+  build_targets = %w(
+    linux-x86_64
+    linux-i686
+    darwin-x86_64
+    darwin-i386
+    mingw-x86_64
+    mingw-i686
+  )
+end
+
 MRuby::Build.new do |conf|
   toolchain :clang
 
@@ -28,21 +41,8 @@ MRuby::Build.new do |conf|
   gem_config(conf)
 end
 
-build_targets = ENV.fetch("BUILD_TARGET", "").split(",")
-
-if build_targets == %w(all)
-  build_targets = %w(
-    linux-x86_64
-    linux-i686
-    darwin-x86_64
-    darwin-i386
-    mingw-x86_64
-    mingw-i686
-  )
-end
-
 if build_targets.include?("linux-x86_64")
-  MRuby::Build.new("x86_64-pc-linux-gnu") do |conf|
+  MRuby::Build.new("linux-x86_64") do |conf|
     toolchain :gcc
 
     # C compiler settings
@@ -51,13 +51,15 @@ if build_targets.include?("linux-x86_64")
       cc.include_paths << %(/root/wslay/lib)
     end
 
+    linker.libraries << %w(ssl crypto)
+
     gem_config(conf)
   end
 end
 
 if build_targets.include?("linux-i686")
-  MRuby::CrossBuild.new("i686-pc-linux-gnu") do |conf|
-    toolchain :gcc
+  MRuby::CrossBuild.new("linux-i686") do |conf|
+    toolchain :clang
 
     # C compiler settings
     conf.cc do |cc|
@@ -69,24 +71,42 @@ if build_targets.include?("linux-i686")
       cc.flags << "-m32"
     end
 
+    linker.libraries << %w(ssl crypto)
+
     gem_config(conf)
   end
 end
 
 if build_targets.include?("darwin-x86_64")
-  MRuby::CrossBuild.new("x86_64-apple-darwin15") do |conf|
-    toolchain :clang
+  if RUBY_PLATFORM =~ /darwin/i
+    MRuby::Build.new("macos-x86_64") do |conf|
+      toolchain :clang
 
-    [conf.cc, conf.linker].each do |cc|
-      cc.command = "x86_64-apple-darwin15-clang"
+      # C compiler settings
+      conf.cc do |cc|
+        cc.include_paths << %w(/usr/local/include /usr/local/opt/openssl/include)
+        linker.library_paths << %w(/usr/local/lib /usr/local/opt/openssl/lib)
+
+        linker.libraries << %w(ssl crypto)
+      end
+
+      gem_config(conf)
     end
-    conf.cxx.command      = "x86_64-apple-darwin15-clang++"
-    conf.archiver.command = "x86_64-apple-darwin15-ar"
+  else
+    MRuby::CrossBuild.new("x86_64-apple-darwin15") do |conf|
+      toolchain :clang
 
-    conf.build_target     = "x86_64-pc-linux-gnu"
-    conf.host_target      = "x86_64-apple-darwin15"
+      [conf.cc, conf.linker].each do |cc|
+        cc.command = "x86_64-apple-darwin15-clang"
+      end
+      conf.cxx.command      = "x86_64-apple-darwin15-clang++"
+      conf.archiver.command = "x86_64-apple-darwin15-ar"
 
-    gem_config(conf)
+      conf.build_target     = "x86_64-pc-linux-gnu"
+      conf.host_target      = "x86_64-apple-darwin15"
+
+      gem_config(conf)
+    end
   end
 end
 
