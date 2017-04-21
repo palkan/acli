@@ -8,7 +8,8 @@ module Acli
       print_version if @options["v"]
       print_help if @options["h"]
       ask_for_url unless @options["u"]
-      Client.new(@options["u"])
+      # TODO: support HTTP headers
+      Client.new(@options["u"], {}, @options)
     rescue URI::Error, Client::Error => e
       Utils.exit_with_error(e)
     end
@@ -26,6 +27,8 @@ Usage: acli [options]
 
 Options:
   -u                    # URL to connect
+  -c                    # Channel to subscribe to
+  -m                    # Number of messages to receive before disconnect
   -v                    # Print version
   -h                    # Print this help
       USAGE
@@ -38,7 +41,7 @@ Options:
 
     def parse_options(argv)
       class << argv; include Getopts; end
-      argv.getopts("vhu:")
+      argv.getopts("vhu:c:m:")
     end
   end
 end

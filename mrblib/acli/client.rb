@@ -11,10 +11,13 @@ module Acli
 
     attr_reader :identifier
 
-    def initialize(url, protocol = "actioncable", headers = {})
+    def initialize(url, headers = {}, options = {})
       @uri = URI.parse(normalize_url(url))
       @ws = WebSocket::Client.new(:ws, @uri.host, @uri.port, @uri.path)
       @commands = Commands.new(self)
+      @channel_to_subscribe = options["c"]
+      @msg_limit = options["m"] ? options["m"].to_i : nil
+      @received_count = 0
 
       poll = @ws.poll
       @stdin_fd = poll.add(STDIN_FILENO, Poll::In)
@@ -69,6 +72,7 @@ module Acli
 
     def print_welcome(_)
       puts "Connected to Action Cable at #{@uri}"
+      subscribe if @channel_to_subscribe
     end
 
     def track_ping(_ping)
@@ -79,10 +83,21 @@ module Acli
       @identifier = msg["identifier"]
       @channel = JSON.parse(@identifier)["channel"]
       puts "Subscribed to #{@channel} (#{@identifier})"
+      close if @msg_limit && @msg_limit.zero?
     end
 
     def received(msg)
       puts msg
+      track_incoming
+    end
+
+    def subscribe
+      handle_command "\\s #{@channel_to_subscribe}"
+    end
+
+    def track_incoming
+      @received_count += 1
+      close if @msg_limit && (@msg_limit == @received_count)
     end
 
     # Downcase and prepend with protocol if missing
