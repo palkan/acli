@@ -28,8 +28,8 @@ MRuby::Build.new do |conf|
   # C compiler settings
   conf.cc do |cc|
     if RUBY_PLATFORM =~ /darwin/i
-      cc.include_paths << %w(/usr/local/include /usr/local/opt/openssl/include)
-      linker.library_paths << %w(/usr/local/lib /usr/local/opt/openssl/lib)
+      cc.include_paths << %w(/usr/local/include /usr/local/opt/openssl/include /usr/local/opt/libressl/include)
+      linker.library_paths << %w(/usr/local/lib /usr/local/opt/openssl/lib /usr/local/opt/libressl/lib)
     else
       cc.flags << [ENV['CFLAGS'] || %w(-fPIC -DHAVE_ARPA_INET_H)]
       cc.include_paths << %(/root/wslay/lib)

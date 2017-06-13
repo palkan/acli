@@ -162,6 +162,12 @@ You can run `docker-compose run compile` or `docker-compose run test`.
 
 You can also build the project _locally_ (on MacOS or Linux): `rake compile` or `rake test`.
 
+### Requirements:
+
+- [libtls](https://www.libressl.org/) (`brew install libressl`)
+
+- [wslay](https://github.com/tatsuhiro-t/wslay) (`brew install wslay`)
+
 ## Contributing
 
 Bug reports and pull requests are welcome on GitHub at https://github.com/palkan/acli.

@@ -15,7 +15,8 @@ MRuby::Gem::Specification.new("acli") do |spec|
   spec.add_dependency "mruby-uri-parser", mgem: "mruby-uri-parser"
   spec.add_dependency "mruby-getopts", mgem: "mruby-getopts"
 
-  spec.add_dependency "mruby-websockets", github: "palkan/mruby-websockets", branch: "no-tls"
+  spec.add_dependency "mruby-websockets", github: "Asmod4n/mruby-websockets"
+  spec.add_dependency "mruby-tls", github: "palkan/mruby-tls", branch: "feature/no-verify-support"
 
   spec.add_test_dependency "mruby-mtest", mgem: "mruby-mtest"
 end

@@ -12,14 +12,15 @@ module Acli
     attr_reader :identifier
 
     def initialize(url, headers = {}, options = {})
-      @uri = URI.parse(normalize_url(url))
-      @ws = WebSocket::Client.new(:ws, @uri.host, @uri.port, @uri.path)
+      url = normalize_url(url)
+      @uri = URI.parse(url)
+      @ws = WebSocket::Client.new(protocol(url), @uri.host, @uri.port, @uri.path, tls_config)
       @commands = Commands.new(self)
       @channel_to_subscribe = options["c"]
       @msg_limit = options["m"] ? options["m"].to_i : nil
       @received_count = 0
 
-      poll = @ws.poll
+      poll = @ws.instance_variable_get(:@connection).instance_variable_get(:@poll)
       @stdin_fd = poll.add(STDIN_FILENO, Poll::In)
 
       while ready_fds = poll.wait
@@ -107,6 +108,14 @@ module Acli
       url.sub!("ws", "http")
       url = "http://#{url}" unless url.start_with?("http")
       url
+    end
+
+    def protocol(url)
+      url.start_with?("https") ? :wss : :ws
+    end
+
+    def tls_config
+      Tls::Config.new(noverify: true)
     end
   end
 end
