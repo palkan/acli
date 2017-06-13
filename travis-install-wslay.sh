@@ -7,6 +7,7 @@ set -e
 
 # check if wslay is already installed
 if [ ! -d "$HOME/wslay/lib" ]; then
+  cd $HOME
   git clone https://github.com/tatsuhiro-t/wslay
   cd wslay
   autoreconf -i

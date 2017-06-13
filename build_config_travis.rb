@@ -15,7 +15,11 @@ MRuby::Build.new do |conf|
   # C compiler settings
   conf.cc do |cc|
     cc.flags << [ENV['CFLAGS'] || %w(-fPIC -DHAVE_ARPA_INET_H)]
-    cc.include_paths << ["#{ENV['HOME']}/wslay/lib", "#{ENV['HOME']}/libsodium/include"]
+    cc.include_paths << [
+      "#{ENV['HOME']}/wslay/lib",
+      "#{ENV['HOME']}/libsodium/include",
+      "#{ENV['HOME']}/libressl/lib"
+    ]
 
     linker.libraries << %w(ssl crypto)
   end
