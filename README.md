@@ -104,8 +104,6 @@ acli -u http://example.com/cable -c channel_name -m M
 
 - Support HTTP headers
 
-- Support TLS
-
 - Reconnect support
 
 - Output formatters (and colorize)

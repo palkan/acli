@@ -29,7 +29,7 @@ cache:
   apt: true
   directories:
   - $HOME/wslay
-  - $HOME/libressl
+  - $HOME/opt
 
 env:
   - MRUBY_VERSION=1.2.0
