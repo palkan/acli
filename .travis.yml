@@ -1,4 +1,7 @@
 sudo: false
+dist: trusty
+notifications:
+  email: false
 addons:
   apt:
     packages:
@@ -16,6 +19,7 @@ addons:
       - wget
       - xz-utils
       - zlib1g-dev
+      - clang
 language: c
 compiler:
   - clang
@@ -24,18 +28,17 @@ compiler:
 cache:
   apt: true
   directories:
-  - $HOME/libsodium
   - $HOME/wslay
+  - $HOME/opt
 
 env:
   - MRUBY_VERSION=1.2.0
   - MRUBY_VERSION=master
 
 install:
-  - ./travis-install-libsodium.sh
   - ./travis-install-wslay.sh
-  - export PKG_CONFIG_PATH=$HOME/libsodium/lib/pkgconfig:$HOME/wslay:$PKG_CONFIG_PATH
-  - export LD_LIBRARY_PATH=$HOME/libsodium/lib:$HOME/wslay/lib:$LD_LIBRARY_PATH
+  - ./travis-install-libressl.sh
+  - export LD_LIBRARY_PATH=$HOME/opt/libressl/lib:$LD_LIBRARY_PATH
 
 script:
   - MRUBY_CONFIG=build_config_travis.rb rake clean
