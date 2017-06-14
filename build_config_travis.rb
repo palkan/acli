@@ -6,7 +6,11 @@ def gem_config(conf)
 end
 
 MRuby::Build.new do |conf|
-  toolchain :clang
+  if ENV['CC'] == 'clang'
+    toolchain :clang
+  else
+    toolchain :gcc
+  end
 
   conf.enable_bintest
   conf.enable_debug
@@ -15,13 +19,8 @@ MRuby::Build.new do |conf|
   # C compiler settings
   conf.cc do |cc|
     cc.flags << [ENV['CFLAGS'] || %w(-fPIC -DHAVE_ARPA_INET_H)]
-    cc.include_paths << [
-      "#{ENV['HOME']}/wslay/lib",
-      "#{ENV['HOME']}/libsodium/include",
-      "#{ENV['HOME']}/libressl/lib"
-    ]
-
-    linker.libraries << %w(ssl crypto)
+    cc.include_paths << ["#{ENV['HOME']}/opt/libressl/include"]
+    linker.library_paths << ["#{ENV['HOME']}/opt/libressl/lib"]
   end
 
   gem_config(conf)

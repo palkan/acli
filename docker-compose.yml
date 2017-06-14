@@ -1,20 +1,25 @@
-compile: &defaults
-  build: .
-  volumes:
-    - .:/home/mruby/code:rw
-  command: rake compile
-test:
-  <<: *defaults
-  command: rake test
-bintest:
-  <<: *defaults
-  command: rake test:bintest
-mtest:
-  <<: *defaults
-  command: rake test:mtest
-clean:
-  <<: *defaults
-  command: rake clean
-shell:
-  <<: *defaults
-  command: bash
+version: '3'
+services:
+  app: &app
+    build: .
+    image: acli:0.1.0
+    volumes:
+      - .:/home/mruby/code:rw
+  compile:
+    <<: *app
+    command: rake compile
+  test:
+    <<: *app
+    command: rake test
+  bintest:
+    <<: *app
+    command: rake test:bintest
+  mtest:
+    <<: *app
+    command: rake test:mtest
+  clean:
+    <<: *app
+    command: rake clean
+  shell:
+    <<: *app
+    command: bash

@@ -6,14 +6,14 @@
 set -e
 
 # check if libressl is already installed
-if [ ! -d "$HOME/libressl/lib" ]; then
+if [ ! -d "$HOME/opt/libressl/lib" ]; then
   cd $HOME
   git clone https://github.com/libressl-portable/portable libressl
   cd libressl
   ./autogen.sh
-  ./configure --prefix=/usr
+  ./configure --prefix="${HOME}/opt/libressl"
   make && make check
-  sudo make install
+  make install
 else
   echo 'Using cached directory.'
 fi
