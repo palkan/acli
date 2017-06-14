@@ -25,7 +25,7 @@ bin_groups.each do |k, files|
 
   files.each do |path|
     basepath = File.basename(path)
-    contents << "- [#{basepath}](https://s3.amazonaws.com/acli/builds/#{version}/#{basepath})"
+    contents << "- [#{basepath}](https://s3-eu-west-1.amazonaws.com/acli/builds/#{version}/#{basepath})"
   end
 
   contents << ""
