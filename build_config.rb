@@ -40,7 +40,7 @@ if build_targets == %w(all)
 end
 
 MRuby::Build.new do |conf|
-  toolchain :gcc
+  toolchain :clang
 
   conf.enable_bintest
   conf.enable_debug
