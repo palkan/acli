@@ -1,5 +1,9 @@
+# require: "utils"
+
 module Acli
   class Cli
+    include Utils
+
     def initialize(argv)
       @options = parse_options(argv)
     end
@@ -11,7 +15,7 @@ module Acli
       # TODO: support HTTP headers
       Client.new(@options["u"], {}, @options)
     rescue URI::Error, Client::Error => e
-      Utils.exit_with_error(e)
+      exit_with_error(e)
     end
 
     private
@@ -36,7 +40,7 @@ Options:
     end
 
     def ask_for_url
-      @options["u"] = Utils.prompt("Enter URL: ")
+      @options["u"] = prompt("Enter URL: ")
     end
 
     def parse_options(argv)

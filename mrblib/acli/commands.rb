@@ -1,5 +1,9 @@
+# require: "utils"
+
 module Acli
   class Commands
+    include Utils
+
     COMMANDS = {
       "s" => "subscribe",
       "s+" => "isubscribe",
@@ -49,7 +53,7 @@ Commands:
     end
 
     def isubscribe(channel = nil, params = {})
-      channel ||= Utils.prompt("Enter channel ID: ")
+      channel ||= prompt("Enter channel ID: ")
       params.merge!(request_message)
       subscribe(channel, params)
     end
@@ -60,7 +64,7 @@ Commands:
     end
 
     def iperform(action = nil, params = {})
-      action ||= Utils.prompt("Enter action: ")
+      action ||= prompt("Enter action: ")
       params.merge!(request_message)
       perform(action, params)
     end
@@ -74,16 +78,16 @@ Commands:
     def request_message
       msg = {}
       loop do
-        key = Utils.prompt("Enter key (or press ENTER to finish): ")
+        key = prompt("Enter key (or press ENTER to finish): ")
         break msg if key.empty?
-        msg[key] = Utils.serialize(Utils.prompt("Enter value: "))
+        msg[key] = serialize(prompt("Enter value: "))
       end
     end
 
     def parse_kv(str)
       str.scan(/(\w+)\s*:\s*([^\s\:]*)/).each_with_object({}) do |kv, acc|
         k, v = kv[0], kv[1]
-        acc[k] = Utils.serialize(v)
+        acc[k] = serialize(v)
       end
     end
   end

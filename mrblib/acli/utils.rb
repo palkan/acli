@@ -28,7 +28,5 @@ module Acli
         str
       end
     end
-
-    extend self
   end
 end
