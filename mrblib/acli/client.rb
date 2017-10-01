@@ -48,7 +48,9 @@ module Acli
     end
 
     def handle_frame(frame)
-      return unless frame
+      if frame.nil?
+        raise ClonnectionClosedError, "Closed abnormally!"
+      end
 
       if frame.opcode == :connection_close
         raise ClonnectionClosedError, "Closed with status: #{frame.status_code}"
