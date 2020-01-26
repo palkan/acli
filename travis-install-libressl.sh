@@ -8,7 +8,7 @@ set -e
 # check if libressl is already installed
 if [ ! -d "$HOME/opt/libressl/lib" ]; then
   cd $HOME
-  git clone https://github.com/libressl-portable/portable libressl
+  git clone --branch v3.0.2 https://github.com/libressl-portable/portable libressl
   cd libressl
   ./autogen.sh
   ./configure --prefix="${HOME}/opt/libressl"
