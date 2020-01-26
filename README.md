@@ -33,7 +33,7 @@ Just run it without any arguments:
 ```sh
 acli
 
-Enter URL: 
+Enter URL:
 
 # After successful connection you receive a message:
 Connected to Action Cable at http://example.com/cable
@@ -55,7 +55,7 @@ Then you can run Action Cable commands:
 Enter channel ID:
 ...
 # Generate params object by providing keys and values one by one
-Enter key (or press ENTER to finish): 
+Enter key (or press ENTER to finish):
 ...
 Enter value:
 # After successful subscription you receive a message
@@ -108,7 +108,7 @@ acli -u http://example.com/cable -c channel_name -m M
 
 - Output formatters (and colorize)
 
-### Scenarios 
+### Scenarios
 
 **Work in progress**
 
@@ -151,7 +151,7 @@ Running ACLI with scenario:
 acli -u localhost -s echo.yml
 ```
 
-The exit code is 0 if the scenario passes and 1 otherwise. So it can be used for black-box testing. 
+The exit code is 0 if the scenario passes and 1 otherwise. So it can be used for black-box testing.
 
 ## Development
 

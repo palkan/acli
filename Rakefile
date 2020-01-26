@@ -1,9 +1,9 @@
 require "fileutils"
 
-MRUBY_VERSION = "1.2.0"
+MRUBY_VERSION = "2.1.0"
 
 file :mruby do
-  sh "git clone --depth=1 https://github.com/mruby/mruby"
+  sh "git clone --branch=#{MRUBY_VERSION} --depth=1 https://github.com/mruby/mruby"
 end
 
 APP_NAME = ENV["APP_NAME"] || "acli"
