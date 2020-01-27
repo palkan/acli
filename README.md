@@ -162,7 +162,7 @@ You can also build the project _locally_ (on MacOS or Linux): `rake compile` or 
 
 ### Requirements:
 
-- [libtls](https://www.libressl.org/) (`brew install libressl`)
+- [libressl](https://www.libressl.org/) (`brew install libressl`)
 
 - [wslay](https://github.com/tatsuhiro-t/wslay) (`brew install wslay`)
 
