@@ -29,6 +29,24 @@ module Acli
       end
     end
 
+    # Downcase and prepend with protocol if missing
+    def normalize_url(url)
+      url = url.downcase
+      # Replace ws protocol with http, 'cause URI cannot resolve port for non-HTTP
+      url.sub!("ws", "http")
+      url = "http://#{url}" unless url.start_with?("http")
+      url
+    end
+
+    def uri_to_ws_s(uri)
+      "#{(uri.scheme == "https" || uri.scheme == "wss") ? "wss://" : "ws://"}"\
+      "#{uri.userinfo ? "#{uri.userinfo}@" : ""}"\
+      "#{uri.host}"\
+      "#{uri.port == 80 || (uri.port == 443 && uri.scheme == "https") ? "" : ":#{uri.port}"}"\
+      "#{uri.path}"\
+      "#{uri.query ? "?#{uri.query}" : ""}"
+    end
+
     extend self
   end
 end

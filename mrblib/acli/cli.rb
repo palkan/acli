@@ -1,4 +1,6 @@
 module Acli
+  DEFAULT_CABLE_PATH = "/cable"
+
   class Cli
     def initialize(argv)
       @options = parse_options(argv)
@@ -8,8 +10,17 @@ module Acli
       print_version if @options["v"]
       print_help if @options["h"]
       ask_for_url unless @options["u"]
-      # TODO: support HTTP headers
-      Client.new(@options["u"], {}, @options)
+
+      uri =  URI.parse(Utils.normalize_url(@options["u"]))
+      uri.instance_variable_set(:@path, DEFAULT_CABLE_PATH) if uri.path.nil? || uri.path.empty?
+
+      poller = Poller.new
+      socket = Socket.new(uri)
+      client = Client.new(Utils.uri_to_ws_s(uri), socket, @options)
+
+      poller.add_client(client)
+
+      poller.listen
     rescue URI::Error, Client::Error => e
       Utils.exit_with_error(e)
     end

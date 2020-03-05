@@ -24,7 +24,6 @@ Currently only MacOS (x86\_64) and Linux (x86\_64) are supported.
 
 We're also working on the [Homebrew](https://brew.sh/) formula.
 
-
 ## Usage
 
 ACLI is an interactive tool by design, i.e. it is asking you for input if neccessary.
@@ -160,11 +159,11 @@ You can run `docker-compose run compile` or `docker-compose run test`.
 
 You can also build the project _locally_ (on MacOS or Linux): `rake compile` or `rake test`.
 
-### Requirements:
+### Requirements
 
 - [libressl](https://www.libressl.org/) (`brew install libressl`)
 
-- [wslay](https://github.com/tatsuhiro-t/wslay) (`brew install wslay`)
+- [wslay](https://github.com/tatsuhiro-t/wslay) (`brew install libressl`)
 
 ## Contributing
 
@@ -173,4 +172,3 @@ Bug reports and pull requests are welcome on GitHub at https://github.com/palkan
 ## License
 
 The gem is available as open source under the terms of the [MIT License](http://opensource.org/licenses/MIT).
-

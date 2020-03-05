@@ -13,6 +13,8 @@ module Acli
       str =~ /^\\[\w\?]+\+?/
     end
 
+    attr_reader :client
+
     def initialize(client)
       @client = client
     end
@@ -67,7 +69,7 @@ Commands:
 
     def quit
       puts "Good-bye!.."
-      @client.close
+      client.close
       nil
     end
 
