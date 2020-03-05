@@ -4,20 +4,22 @@ module Acli
     class ClonnectionClosedError < Error; end
 
     attr_reader :identifier, :socket, :commands,
-                :msg_limit, :channel_to_subscribe,
+                :quit_after, :quit_after_messages, :channel_to_subscribe,
                 :connected, :url
 
     alias connected? connected
 
     attr_accessor :received_count, :last_ping_at
 
-    def initialize(url, socket, options = {})
+    def initialize(url, socket, channel: nil, quit_after: nil)
       @url = url
       @connected = false
       @socket = socket
       @commands = Commands.new(self)
-      @channel_to_subscribe = options["c"]
-      @msg_limit = options["m"] ? options["m"].to_i : nil
+      @channel_to_subscribe = channel
+
+      parse_quit_after!(quit_after) if quit_after
+
       @received_count = 0
     end
 
@@ -53,6 +55,7 @@ module Acli
     def connected!
       @connected = true
       puts "Connected to Action Cable at #{@url}"
+      quit! if quit_after == "connect"
       subscribe if channel_to_subscribe
     end
 
@@ -69,7 +72,7 @@ module Acli
           identifier
         end
       puts "Subscribed to #{channel_name}"
-      close if msg_limit&.zero?
+      quit! if quit_after == "subscribed"
     end
 
     def received(msg)
@@ -83,7 +86,23 @@ module Acli
 
     def track_incoming
       self.received_count += 1
-      close if msg_limit == received_count
+      quit! if quit_after == "message" && quit_after_messages == received_count
+    end
+
+    def quit!
+      puts "Quit."
+      close
+    end
+
+    def parse_quit_after!(value)
+      @quit_after =
+        case value
+          in "connect" | "subscribed"
+            value
+          in /\d+/
+            @quit_after_messages = value.to_i
+            "message"
+        end
     end
   end
 end

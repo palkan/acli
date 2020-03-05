@@ -170,7 +170,7 @@ assert("subscribes to a channel with string param") do
 end
 
 assert("performs action") do
-  acli = AcliProcess.new("-u", "localhost:8080", "-c", "EchoChannel")
+  acli = AcliProcess.new("-u", "localhost:8080", "--channel", "EchoChannel")
   acli.running do |process|
     assert_true process.alive?, "Process failed"
     assert_include(
@@ -208,5 +208,56 @@ assert("request query is supported") do
       acli.readline,
       {token: "s3cr3t"}.to_json
     )
+  end
+end
+
+assert("quit after connect") do
+  acli = AcliProcess.new("--url", "localhost:8080", "--quit-after", "connect")
+  acli.running do |process|
+    assert_true process.alive?, "Process failed"
+    assert_include(
+      acli.readline,
+      "Connected to Action Cable"
+    )
+    assert_false process.alive?
+  end
+end
+
+assert("quit after subscribed") do
+  acli = AcliProcess.new("--url", "localhost:8080", "-c", "DemoChannel", "--quit-after", "subscribed")
+  acli.running do |process|
+    assert_true process.alive?, "Process failed"
+    assert_include(
+      acli.readline,
+      "Connected to Action Cable"
+    )
+    assert_include(
+      acli.readline,
+      "Subscribed to DemoChannel"
+    )
+    assert_false process.alive?
+  end
+end
+
+assert("quit after N") do
+  acli = AcliProcess.new("--url", "localhost:8080", "-c", "EchoChannel", "--quit-after", "2")
+  acli.running do |process|
+    assert_true process.alive?, "Process failed"
+    assert_include(
+      acli.readline,
+      "Connected to Action Cable"
+    )
+    assert_include(
+      acli.readline,
+      "Subscribed to EchoChannel"
+    )
+
+    acli.puts '\p echo_token'
+    assert_include(acli.readline, "token")
+
+    acli.puts '\p echo_token'
+    assert_include(acli.readline, "token")
+
+    assert_false process.alive?
   end
 end

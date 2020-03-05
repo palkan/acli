@@ -72,6 +72,9 @@ You can also provide URL and channel info using CLI options:
 
 ```sh
 acli -u http://example.com/cable -c channel_name
+
+# or using full option names
+acli --url=http://example.com/cable --channel=channel_name
 ```
 
 You can pass channel params this way for now.
@@ -95,8 +98,8 @@ acli -h
 # Print version
 acli -v
 
-# Quit after M incoming messages
-acli -u http://example.com/cable -c channel_name -m M
+# Quit after M incoming messages (excluding pings and system messages)
+acli -u http://example.com/cable -c channel_name --quit-after=M
 ```
 
 ### TODO

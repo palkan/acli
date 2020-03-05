@@ -4,19 +4,17 @@ module Acli
     end
     class ClonnectionClosedError < Error
     end
-    attr_reader(:identifier, :socket, :commands, :msg_limit, :channel_to_subscribe, :connected, :url)
+    attr_reader(:identifier, :socket, :commands, :quit_after, :quit_after_messages, :channel_to_subscribe, :connected, :url)
     alias :connected? :connected
     attr_accessor(:received_count, :last_ping_at)
-    def initialize(url, socket, options = {})
+    def initialize(url, socket, channel: nil, quit_after: nil)
       @url = url
       @connected = false
       @socket = socket
       @commands = Commands.new(self)
-      @channel_to_subscribe = options["c"]
-      @msg_limit = if options["m"]
-        options["m"].to_i
-      else
-        nil
+      @channel_to_subscribe = channel
+      if quit_after
+        parse_quit_after!(quit_after)
       end
       @received_count = 0
     end
@@ -62,6 +60,9 @@ module Acli
     def connected!
       @connected = true
       puts("#{"Connected to Action Cable at "}#{@url}")
+      if (quit_after == "connect")
+        quit!
+      end
       if channel_to_subscribe
         subscribe
       end
@@ -77,8 +78,8 @@ module Acli
         identifier
       end
       puts("#{"Subscribed to "}#{channel_name}")
-      if msg_limit&.zero?
-        close
+      if (quit_after == "subscribed")
+        quit!
       end
     end
     def received(msg)
@@ -90,9 +91,26 @@ module Acli
     end
     def track_incoming
       self.received_count += 1
-      if (msg_limit == received_count)
-        close
+      if ((quit_after == "message") && (quit_after_messages == received_count))
+        quit!
       end
+    end
+    def quit!
+      puts("Quit.")
+      close
+    end
+    def parse_quit_after!(value)
+      @quit_after = (__m__ = value
+      if (("connect" === __m__) || ("subscribed" === __m__))
+        value
+      else
+        if (/\d+/ === __m__)
+          @quit_after_messages = value.to_i
+          "message"
+        else
+          Kernel.raise(NoMatchingPatternError, __m__.inspect)
+        end
+      end)
     end
   end
 end
