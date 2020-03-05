@@ -82,3 +82,18 @@ desc "run mirb"
 task irb: :default do
   exec File.join(mruby_root, "bin", "mirb")
 end
+
+Rake::Task["run"].clear
+
+desc "run compiled binary"
+task run: :compile do
+  args =
+    if (split_index = ARGV.index("--"))
+      ARGV[(split_index+1)..-1]
+    else
+      []
+    end
+
+  sh "bin/acli #{args.join(" ")}"
+end
+
