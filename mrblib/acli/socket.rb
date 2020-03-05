@@ -11,7 +11,8 @@ module Acli
 
       connection_class = tls? ? WebSocket::WssConnection : WebSocket::WsConnection
 
-      @ws = connection_class.new(uri.host, uri.port, uri.path, tls_config)
+      fullpath = "#{uri.path}#{uri.query ? "?#{uri.query}" : ""}"
+      @ws = connection_class.new(uri.host, uri.port, fullpath, tls_config)
 
       setup_ws
     end
