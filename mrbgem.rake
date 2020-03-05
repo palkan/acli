@@ -1,8 +1,13 @@
+require_relative ".rbnext"
+using MRubyNext
+
 MRuby::Gem::Specification.new("acli") do |spec|
   spec.license = "MIT"
   spec.author  = "Vladimir Dementyev"
   spec.summary = "acli"
   spec.bins    = ["acli"]
+
+  spec.setup_ruby_next!
 
   spec.add_dependency "mruby-exit", core: "mruby-exit"
   spec.add_dependency "mruby-string-ext", core: "mruby-string-ext"

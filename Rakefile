@@ -97,3 +97,23 @@ task run: :compile do
   sh "bin/acli #{args.join(" ")}"
 end
 
+desc "transpile source code with ruby-next"
+task rbnext: [] do
+  Dir.chdir(APP_ROOT) do
+    sh "ruby-next nextify ./mrblib --no-refine --min-version=2.6 --single-version"
+  end
+end
+
+namespace :rbnext do
+  desc "generate core extensions file"
+  task core_ext: [] do
+    Dir.chdir(APP_ROOT) do
+      sh "ruby-next core_ext -o mrblib/acli/core_ext.rb --name=deconstruct --name=patternerror"
+    end
+  end
+end
+
+# Do not run Ruby Next on CI
+unless ENV["CI"]
+  Rake::Task["compile"].enhance [:rbnext]
+end
