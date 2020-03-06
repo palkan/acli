@@ -1,29 +1,16 @@
 require_relative "../mrblib/acli/version"
 require "socket"
 require "json"
+require "childprocess"
 
 BIN_PATH = File.join(File.dirname(__FILE__), "../mruby/bin/acli")
-
-# Skip integration tests if server is not running.
-#
-# Run server using the following command (from tha project's root):
-#
-#    ruby etc/server.rb
-#
-SERVER_RUNNING =
-  begin
-    Socket.tcp("localhost", 8080, connect_timeout: 1).close
-    true
-  rescue Errno::ECONNREFUSED, Errno::EHOSTUNREACH, SocketError
-    false
-  end
 
 class AcliProcess
   attr_reader :process, :wio, :rio
 
-  def initialize(*args)
+  def initialize(*args, bin: BIN_PATH)
     @rio, @wio = IO.pipe
-    @process = ChildProcess.build(BIN_PATH, *args)
+    @process = ChildProcess.build(bin, *args)
     process.io.stdout = process.io.stderr = @wio
     process.duplex = true
   end
@@ -35,11 +22,9 @@ class AcliProcess
     process.stop
   end
 
-  def readline
+  def readline(time = 0.99)
     line = nil
     thread = Thread.new { line = rio.readline }
-
-    time = 0.99
 
     loop do
       return line if line
@@ -60,32 +45,60 @@ class AcliProcess
 end
 
 assert("with invalid url") do
-  output, status = Open3.capture2(BIN_PATH, "-u", "localhost:0:1:2")
-
-  assert_false status.success?, "Process exited cleanly"
-  assert_include output, "Error: "
+  acli = AcliProcess.new("-u", "localhost:80:80")
+  acli.running do |process|
+    assert_include acli.readline, "Error: "
+    assert_false process.alive?
+    assert_equal 1, process.exit_code
+  end
 end
 
 assert("version") do
-  output, status = Open3.capture2(BIN_PATH, "-v")
+  acli = AcliProcess.new("-v")
 
-  assert_true status.success?, "Process did not exit cleanly"
-  assert_include output, "v#{Acli::VERSION}"
+  acli.running do |process|
+    assert_include acli.readline, "v#{Acli::VERSION}"
+    assert_false process.alive?
+    assert_equal 0, process.exit_code
+  end
 end
 
 assert("help") do
-  output, status = Open3.capture2(BIN_PATH, "-h")
+  acli = AcliProcess.new("-h")
 
-  assert_true status.success?, "Process did not exit cleanly"
-  assert_include(
-    output,
-    "Usage: acli [options]"
-  )
+  acli.running do |process|
+    assert_include(
+      acli.readline,
+      "Usage: acli [options]"
+    )
+    assert_false process.alive?
+    assert_equal 0, process.exit_code
+  end
 end
 
-return $stdout.puts("Skip integration tests: server is not runnnig") unless SERVER_RUNNING
+SERVER_RUNNING =
+  begin
+    server_process = AcliProcess.new(bin: File.join(__dir__, "../etc/server.rb"))
+    $stdout.puts "\nStarting test server..."
+    server_process.process.leader = true
+    server_process.process.start
 
-require "childprocess"
+    # Wait 'till server is ready
+    loop do
+      line = server_process.readline
+      if line =~ /Listening on/
+        $stdout.puts "Server started"
+        at_exit { server_process.process.stop }
+        break true
+      end
+
+      break false unless server_process.process.alive?
+
+      sleep 1 if line =~ /Timed out/
+    end
+  end
+
+return $stdout.puts("Skip integration tests: server is not runnnig") unless SERVER_RUNNING
 
 assert("connects successfully") do
   acli = AcliProcess.new("-u", "localhost:8080")
