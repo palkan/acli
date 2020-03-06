@@ -6,23 +6,25 @@ ACLI is Action Cable command line interface written in [mRuby](http://mruby.org)
 
 It's a standalone binary which can be used:
 
-- in development to _play_ with Action Cable channels (instead of struggling with browsers)
+- In development for palying with Action Cable channels (instead of struggling with browsers)
 
-- for acceptance testing (see [Scenarios](#scenarios))
-
-- for benchmarking.
+- For monitoring and benchmarking.
 
 <a href="https://evilmartians.com/">
 <img src="https://evilmartians.com/badges/sponsored-by-evil-martians.svg" alt="Sponsored by Evil Martians" width="236" height="54"></a>
 
 ## Installation
 
-Checkout [Downloads](https://github.com/palkan/acli/blob/master/DOWNLOADS.md) page for pre-compiled binaries.
-
 Currently only MacOS (x86\_64) and Linux (x86\_64) are supported.
 **PRs are welcomed** for other platforms support.
 
-We're also working on the [Homebrew](https://brew.sh/) formula.
+### Precompiled binaries
+
+See GitHub [releases](https://github.com/palkan/acli/releases).
+
+### Homebrew
+
+TBD
 
 ## Usage
 
@@ -30,7 +32,7 @@ ACLI is an interactive tool by design, i.e. it is asking you for input if necces
 Just run it without any arguments:
 
 ```sh
-acli
+$ acli
 
 Enter URL:
 
@@ -113,8 +115,18 @@ acli -u http://example.com/cable -c channel_name --quit-after=M
 
 ## Development
 
-ACLI is built on top of [mruby-cli](http://mruby-cli.org), so it comes with Docker environment configuration.
-You can run `docker-compose run compile` or `docker-compose run test`.
+We have Docker & [Dip](https://github.com/bibendi/dip) configuration for development:
+
+```sh
+# initial provision
+dip provision
+
+# run rake tasks
+dip rake test
+
+# or open a console within a container
+dip bash
+```
 
 You can also build the project _locally_ (on MacOS or Linux): `rake compile` or `rake test`.
 
@@ -126,7 +138,7 @@ You can also build the project _locally_ (on MacOS or Linux): `rake compile` or 
 
 ## Contributing
 
-Bug reports and pull requests are welcome on GitHub at https://github.com/palkan/acli.
+Bug reports and pull requests are welcome on [GitHub](https://github.com/palkan/acli).
 
 ## License
 

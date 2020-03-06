@@ -32,13 +32,6 @@ end
 
 build_targets = ENV.fetch("BUILD_TARGET", "").split(",")
 
-if build_targets == %w(all)
-  build_targets = %w(
-    linux-x86_64
-    darwin-x86_64
-  )
-end
-
 MRuby::Build.new do |conf|
   toolchain :clang
 
@@ -49,16 +42,16 @@ MRuby::Build.new do |conf|
   gem_config(conf)
 end
 
-if build_targets.include?("linux-x86_64")
-  MRuby::Build.new("linux-x86_64") do |conf|
+if build_targets.include?("Linux-x86_64")
+  MRuby::Build.new("Linux-x86_64") do |conf|
     toolchain :gcc
 
     gem_config(conf)
   end
 end
 
-if build_targets.include?("darwin-x86_64")
-  MRuby::Build.new("macos-x86_64") do |conf|
+if build_targets.include?("Darwin-x86_64")
+  MRuby::Build.new("Darwin-x86_64") do |conf|
     toolchain :gcc
 
     gem_config(conf)
