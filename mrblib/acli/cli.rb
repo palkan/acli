@@ -64,12 +64,6 @@ Options:
         print_version if opts["v"]
         print_help if opts["h"]
 
-        channel = opts["c"] || opts["channel"]
-        channel = nil if channel&.empty?
-
-        quit_after = opts["quit-after"]
-        quit_after = nil if quit_after&.empty?
-
         headers =
           if opts["headers"]
             opts["headers"].split(",")
@@ -77,10 +71,10 @@ Options:
 
         {
           url: opts["u"] || opts["url"],
-          channel: channel,
-          quit_after: quit_after,
+          channel: opts["c"] || opts["channel"],
+          quit_after: opts["quit-after"],
           headers: headers
-        }
+        }.tap { |data| data.delete_if { _2.empty? } }
       end
     end
   end
