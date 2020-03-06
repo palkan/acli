@@ -7,7 +7,7 @@ module Acli
     alias tls? tls
 
     def initialize(uri, headers = nil)
-      @tls = uri.scheme == :https
+      @tls = uri.scheme == "https"
 
       connection_class = tls? ? WebSocket::WssConnection : WebSocket::WsConnection
 
