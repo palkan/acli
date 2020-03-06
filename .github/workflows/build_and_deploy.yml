@@ -1,4 +1,4 @@
-name: Linux Build
+name: Build
 
 on:
   push:
@@ -20,6 +20,18 @@ jobs:
     - name: Test
       run: |
         rake test
+    - name: Build
+      env:
+        BUILD_TARGET: Linux-x86_64
+      run: |
+        rake host_clean
+        rake compile
+    - name: Upload linux build
+      uses: actions/upload-artifact@v1
+      with:
+        name: acli-Linux-x86_64
+        path: mruby/build/Linux-x86_64/bin/acli
+
   test_macos:
     runs-on: macos-latest
     env:
@@ -37,3 +49,12 @@ jobs:
     - name: Test
       run: |
         rake test
+    - name: Build
+      env:
+        BUILD_TARGET: Darwin-x86_64
+      run: make build-macos
+    - name: Upload MacOS build
+      uses: actions/upload-artifact@v1
+      with:
+        name: acli-Darwin-x86_64
+        path: mruby/build/Darwin-x86_64/bin/acli
