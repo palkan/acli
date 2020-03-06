@@ -1,0 +1,29 @@
+version: '2.4'
+
+services:
+  dev: &dev
+    build:
+      context: .
+      dockerfile: ./Dockerfile
+      args:
+        RUBY_VERSION: '2.6.3'
+    stdin_open: true
+    tty: true
+    image: palkan/acli-dev:0.1.4
+    working_dir: ${PWD}
+    volumes:
+      - ..:/${PWD}:cached
+      - ./.bashrc:/root/.bashrc:ro
+      - bundle:/usr/local/bundle
+      - mruby:/${PWD}/mruby
+      - docker_etc:/_etc:cached
+    environment:
+      HISTFILE: /_etc/.bash_history
+      PROMPT_DIRTRIM: 2
+    tmpfs:
+      - /tmp
+
+volumes:
+  mruby:
+  bundle:
+  docker_etc:

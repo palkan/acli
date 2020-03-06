@@ -1,0 +1,21 @@
+version: '4'
+
+compose:
+  files:
+    - .dockerdev/docker-compose.yml
+  project_name: acli_dev
+
+interaction:
+  bash:
+    description: Open a Bash shell in app's container
+    service: dev
+    command: /bin/bash
+
+  rake:
+    description: Run rake tasks
+    service: dev
+    command: rake
+
+provision:
+  - dip bash -c "gem install childprocess pry-byebug ruby-next"
+  - dip rake

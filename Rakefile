@@ -2,7 +2,7 @@ require "fileutils"
 
 MRUBY_VERSION = "2.1.0"
 
-file :mruby do
+task :mruby do
   sh "git clone --branch=#{MRUBY_VERSION} --depth=1 https://github.com/mruby/mruby"
 end
 
@@ -13,7 +13,9 @@ mruby_root = File.expand_path(ENV["MRUBY_ROOT"] || "#{APP_ROOT}/mruby")
 mruby_config = File.expand_path(ENV["MRUBY_CONFIG"] || "build_config.rb")
 ENV["MRUBY_ROOT"] = mruby_root
 ENV["MRUBY_CONFIG"] = mruby_config
-Rake::Task[:mruby].invoke unless Dir.exist?(mruby_root)
+
+Rake::Task[:mruby].invoke unless Dir.exist?(File.join(mruby_root, "lib"))
+
 Dir.chdir(mruby_root)
 load "#{mruby_root}/Rakefile"
 
