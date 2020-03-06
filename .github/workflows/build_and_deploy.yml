@@ -1,0 +1,39 @@
+name: Linux Build
+
+on:
+  push:
+    branches:
+    - master
+  pull_request:
+
+jobs:
+  test_linux:
+    runs-on: ubuntu-latest
+    container:
+      image: anycable/acli-dev
+    env:
+      CI: true
+    steps:
+    - uses: actions/checkout@v2
+    - name: Install test deps
+      run: gem install childprocess
+    - name: Test
+      run: |
+        rake test
+  test_macos:
+    runs-on: macos-latest
+    env:
+      CI: true
+    steps:
+    - uses: actions/checkout@v2
+    - name: Install Homebrew
+      run: /bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/master/install.sh)"
+    - name: Install Wslay
+      run: brew install wslay
+    - name: Install Libressl
+      run: brew install libressl
+    - name: Install test deps
+      run: gem install childprocess
+    - name: Test
+      run: |
+        rake test

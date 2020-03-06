@@ -1,5 +1,5 @@
 FROM ubuntu:16.04
-RUN apt-get update && apt-get install -y --no-install-recommends \ 
+RUN apt-get update && apt-get install -y --no-install-recommends \
   automake \
   bison \
   build-essential \
@@ -32,7 +32,7 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
   valac \
   wget \
   xz-utils \
-  zlib1g-dev 
+  zlib1g-dev
 
 # install wslay
 RUN apt-get install -y python-pip

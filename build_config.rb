@@ -4,10 +4,13 @@ def gem_config(conf)
   # be sure to include this gem (the cli app)
   conf.gem(File.expand_path(File.dirname(__FILE__)))
 
-  libressl_dir =
+  libressl_dir = ENV["LIBRESSL_DIR"]
+
+  libressl_dir ||=
     if RUBY_PLATFORM =~ /darwin/i
       "/usr/local/opt/libressl"
     else
+      # Our docker image default
       "/home/mruby/opt/libressl"
     end
 
