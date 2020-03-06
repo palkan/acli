@@ -1,5 +1,7 @@
 module WebSocket
   class WsConnection
+    attr_accessor :custom_headers
+
     def http_handshake
       key = WebSocket.create_key
 
@@ -10,6 +12,9 @@ module WebSocket
         "Sec-WebSocket-Version: 13",
         "Sec-WebSocket-Key: #{key}"
       ]
+
+      headers += custom_headers if custom_headers
+
       headers_str = headers.join("\r\n")
 
       @socket.write("GET #{@path} HTTP/1.1\r\n#{headers_str}\r\n\r\n")

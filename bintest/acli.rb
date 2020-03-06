@@ -211,6 +211,69 @@ assert("request query is supported") do
   end
 end
 
+assert("connects with header") do
+  acli = AcliProcess.new("-u", "localhost:8080", "-c", "EchoChannel", "--headers", "x-api-token:secretos")
+  acli.running do |process|
+    assert_true process.alive?, "Process failed"
+    assert_include(
+      acli.readline,
+      "Connected to Action Cable"
+    )
+    assert_include(
+      acli.readline,
+      "Subscribed to EchoChannel"
+    )
+
+    acli.puts '\p echo_token'
+    assert_include(
+      acli.readline,
+      {token: "secretos"}.to_json
+    )
+  end
+end
+
+assert("connects with multiple headers") do
+  acli = AcliProcess.new("-u", "localhost:8080", "-c", "EchoChannel", "--headers", "x-api-token:secretos,x-api-gate:21")
+  acli.running do |process|
+    assert_true process.alive?, "Process failed"
+    assert_include(
+      acli.readline,
+      "Connected to Action Cable"
+    )
+    assert_include(
+      acli.readline,
+      "Subscribed to EchoChannel"
+    )
+
+    acli.puts '\p echo_headers'
+    assert_include(
+      acli.readline,
+      [["HTTP_X_API_TOKEN","secretos"],["HTTP_X_API_GATE", "21"]].to_json
+    )
+  end
+end
+
+assert("connects with cookie header") do
+  acli = AcliProcess.new("-u", "localhost:8080", "-c", "EchoChannel", "--headers", "cookie:token=nookie")
+  acli.running do |process|
+    assert_true process.alive?, "Process failed"
+    assert_include(
+      acli.readline,
+      "Connected to Action Cable"
+    )
+    assert_include(
+      acli.readline,
+      "Subscribed to EchoChannel"
+    )
+
+    acli.puts '\p echo_token'
+    assert_include(
+      acli.readline,
+      {token: "nookie"}.to_json
+    )
+  end
+end
+
 assert("quit after connect") do
   acli = AcliProcess.new("--url", "localhost:8080", "--quit-after", "connect")
   acli.running do |process|

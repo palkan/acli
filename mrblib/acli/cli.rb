@@ -13,7 +13,7 @@ module Acli
       uri.instance_variable_set(:@path, DEFAULT_CABLE_PATH) if uri.path.nil? || uri.path.empty?
 
       poller = Poller.new
-      socket = Socket.new(uri)
+      socket = Socket.new(uri, @options.delete(:headers))
       client = Client.new(Utils.uri_to_ws_s(uri), socket, **@options)
 
       poller.add_client(client)
@@ -37,6 +37,10 @@ Usage: acli [options]
 Options:
   -u, --url             # URL to connect
   -c, --channel         # Channel to subscribe to
+
+  --headers             # Additional HTTP headers in a form "<k>:<v>" separated by ","
+                        # Example: `--headers="x-api-token:secret,cookie:user_id=26"`
+                        # NOTE: the value should not contain whitespaces.
 
   --quit-after          # Automatically quit after an even occured.
                         # Possible values are:
@@ -66,10 +70,16 @@ Options:
         quit_after = opts["quit-after"]
         quit_after = nil if quit_after&.empty?
 
+        headers =
+          if opts["headers"]
+            opts["headers"].split(",")
+          end
+
         {
           url: opts["u"] || opts["url"],
           channel: channel,
-          quit_after: quit_after
+          quit_after: quit_after,
+          headers: headers
         }
       end
     end

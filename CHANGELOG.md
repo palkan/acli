@@ -1,5 +1,7 @@
 # Change log
 
+- Add HTTP headers support. ([@palkan][])
+
 - Remove `-m` and add `--quit-after` option. ([@palkan][])
 
 - Fix query string support. ([@palkan][])

@@ -6,13 +6,14 @@ module Acli
     attr_reader :ws, :tls
     alias tls? tls
 
-    def initialize(uri)
+    def initialize(uri, headers = nil)
       @tls = uri.scheme == :https
 
       connection_class = tls? ? WebSocket::WssConnection : WebSocket::WsConnection
 
       fullpath = "#{uri.path}#{uri.query ? "?#{uri.query}" : ""}"
       @ws = connection_class.new(uri.host, uri.port, fullpath, tls_config)
+      ws.custom_headers = headers
 
       setup_ws
     end

@@ -75,9 +75,18 @@ acli -u http://example.com/cable -c channel_name
 
 # or using full option names
 acli --url=http://example.com/cable --channel=channel_name
+
+# you can omit scheme and even path (/cable is used by default)
+acli -u example.com
 ```
 
-You can pass channel params this way for now.
+NOTE: you can not pass channels params via command-line options.
+
+You can pass additional request headers:
+
+```sh
+acli -u example.com --headers="x-api-token:secret,cookie:username=john"
+```
 
 Other commands:
 
@@ -101,59 +110,6 @@ acli -v
 # Quit after M incoming messages (excluding pings and system messages)
 acli -u http://example.com/cable -c channel_name --quit-after=M
 ```
-
-### TODO
-
-- Support HTTP headers
-
-- Reconnect support
-
-- Output formatters (and colorize)
-
-### Scenarios
-
-**Work in progress**
-
-Although ACLI has been designed to be an interactive tool, it would be great to have some automation.
-And here come scenarios.
-
-Consider an example:
-
-```yml
-# Commands
-- subscribe: "echo"
-- perform:
-    action: "ping"
-
-# Expectations
-- receive:
-    data:
-      message: "pong"
-```
-
-and another one:
-
-
-```yml
-# Commands
-- subscribe: "clock"
-
-# Expectations
-- receive:
-    data:
-      message: /Current time is .*/
-    timeout: 2
-    # repeat this step 5 times
-    multiplier: 5
-```
-
-Running ACLI with scenario:
-
-```sh
-acli -u localhost -s echo.yml
-```
-
-The exit code is 0 if the scenario passes and 1 otherwise. So it can be used for black-box testing.
 
 ## Development
 

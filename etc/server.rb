@@ -43,7 +43,7 @@ module ApplicationCable
     def connect
       self.id = SecureRandom.uuid
       self.token = request.params[:token] ||
-        request.cookies[:token] ||
+        request.cookies["token"] ||
         request.headers["X-API-TOKEN"]
     end
   end
@@ -79,6 +79,11 @@ class EchoChannel < ApplicationCable::Channel
 
   def echo_token
     transmit token: token
+  end
+
+  def echo_headers
+    headers = connection.send(:request).headers.select { |k,| k.start_with?(/http_x_api/i) }
+    transmit headers
   end
 end
 
