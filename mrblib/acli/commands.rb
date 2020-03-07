@@ -27,6 +27,9 @@ module Acli
       args << arg if arg && !arg.strip.empty?
       args << parse_kv(options) if options && !options.strip.empty?
       self.send(COMMANDS.fetch(cmd), *args)
+    rescue ArgumentError => e
+      puts "Command failed: #{e.message}"
+      nil
     end
 
     def print_help

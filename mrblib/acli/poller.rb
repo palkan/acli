@@ -1,6 +1,6 @@
 module Acli
   class Poller
-    attr_reader :poll, :stdin, :client
+    attr_reader :poll, :stdin, :socket_fd, :client
 
     def initialize
       @poll = Poll.new
@@ -10,26 +10,29 @@ module Acli
     def add_client(client)
       @client = client
 
-      client.socket.setup_poller(poll)
+      @socket_fd = client.socket.setup_poller(poll)
     end
 
     def listen
+      expect_stdin = false
       while ready_fds = poll.wait
         ready_fds.each do |ready_fd|
           if ready_fd == stdin
+            expect_stdin = false
             handle_stdin
           else
             frame = client.socket.receive_frame
-            next unless frame
-            client.handle_incoming(frame)
+            next client.handle_incoming(frame) if frame
+
+            # there is a bug (?) in poll/socket, which activates
+            # socket fd for read right before stdin
+            if expect_stdin
+              raise Acli::ClonnectionClosedError, "Connection closed unexpectedly"
+            end
+            expect_stdin = true
           end
         end
       end
-    rescue => e
-      puts "Unexpected close: #{e}\n#{e.backtrace}"
-      raise
-    ensure
-      client.close
     end
 
     private

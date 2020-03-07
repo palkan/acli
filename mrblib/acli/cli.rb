@@ -1,6 +1,9 @@
 module Acli
   DEFAULT_CABLE_PATH = "/cable"
 
+  class Error < StandardError; end
+  class ClonnectionClosedError < Error; end
+
   class Cli
     def initialize(argv)
       @options = parse_options(argv)
@@ -19,7 +22,7 @@ module Acli
       poller.add_client(client)
 
       poller.listen
-    rescue URI::Error, Client::Error => e
+    rescue URI::Error, Acli::Error => e
       Utils.exit_with_error(e)
     end
 

@@ -1,8 +1,5 @@
 module Acli
   class Client
-    class Error < StandardError; end
-    class ClonnectionClosedError < Error; end
-
     attr_reader :identifier, :socket, :commands,
                 :quit_after, :quit_after_messages, :channel_to_subscribe,
                 :connected, :url

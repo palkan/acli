@@ -1,7 +1,7 @@
 module Acli
   module Utils
     def exit_with_error(e, code = 1)
-      puts "Error: #{e.message}"
+      puts "Error: #{e.message}\n#{e.backtrace.join("\n")}"
       exit code
     end
 

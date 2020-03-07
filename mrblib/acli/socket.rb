@@ -1,8 +1,5 @@
 module Acli
   class Socket
-    class Error < StandardError; end
-    class ClonnectionClosedError < Error; end
-
     attr_reader :ws, :tls
     alias tls? tls
 
@@ -18,13 +15,13 @@ module Acli
       setup_ws
     end
 
-    def poll_socket
+    def socket
       tls? ? ws.instance_variable_get(:@tcp_socket) : ws.instance_variable_get(:@socket)
     end
 
     def setup_poller(poll)
       ws.instance_variable_set(:@poll, poll)
-      poll.add(poll_socket.fileno).tap do |pi|
+      poll.add(socket.fileno).tap do |pi|
         ws.instance_variable_set(:@socket_pi, pi)
       end
     end
@@ -38,13 +35,10 @@ module Acli
     end
 
     def handle_frame(frame)
-      if frame.nil?
-        return
-        raise ClonnectionClosedError, "Closed abnormally!"
-      end
+      return unless frame
 
       if frame.opcode == :connection_close
-        raise ClonnectionClosedError, "Closed with status: #{frame.status_code}"
+        raise Acli::ClonnectionClosedError, "Closed with status: #{frame.status_code}"
       end
 
       frame.msg if frame.opcode == :text_frame
