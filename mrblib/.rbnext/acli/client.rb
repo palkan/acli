@@ -44,10 +44,15 @@ module Acli
           if (__m__.respond_to?(:deconstruct_keys) && ((((__m_hash__src__ = __m__.deconstruct_keys([:type])) || true) && (((Hash === __m_hash__src__) || Kernel.raise(TypeError, "#deconstruct_keys must return Hash")) && (__m_hash__ = __m_hash__src__))) && ("welcome" === __m_hash__[:type])))
             connected!
           else
-            if (__m__.respond_to?(:deconstruct_keys) && ((((__m_hash__src__ = __m__.deconstruct_keys([:message])) || true) && (((Hash === __m_hash__src__) || Kernel.raise(TypeError, "#deconstruct_keys must return Hash")) && (__m_hash__ = __m_hash__src__))) && (__m_hash__.key?(:message) && ((message = __m_hash__[:message]) || true))))
-              received(message)
+            if (__m__.respond_to?(:deconstruct_keys) && ((((__m_hash__src__ = __m__.deconstruct_keys(nil)) || true) && (((Hash === __m_hash__src__) || Kernel.raise(TypeError, "#deconstruct_keys must return Hash")) && (__m_hash__ = __m_hash__src__.dup))) && (("disconnect" === __m_hash__.delete(:type)) && ((opts = __m_hash__) || true))))
+              puts("#{"Disconnected by server: "}#{"#{opts.fetch(:reason, "unknown reason")}#{" "}"}#{"#{"(reconnect: "}#{opts.fetch(:reconnect, "<none>")}#{")"}"}")
+              close
             else
-              Kernel.raise(NoMatchingPatternError, __m__.inspect)
+              if (__m__.respond_to?(:deconstruct_keys) && ((((__m_hash__src__ = __m__.deconstruct_keys([:message])) || true) && (((Hash === __m_hash__src__) || Kernel.raise(TypeError, "#deconstruct_keys must return Hash")) && (__m_hash__ = __m_hash__src__))) && (__m_hash__.key?(:message) && ((message = __m_hash__[:message]) || true))))
+                received(message)
+              else
+                Kernel.raise(NoMatchingPatternError, __m__.inspect)
+              end
             end
           end
         end

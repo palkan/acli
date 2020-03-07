@@ -44,6 +44,11 @@ module Acli
         track_ping!
       in type: "welcome"
         connected!
+      in type: "disconnect", **opts
+        puts "Disconnected by server: " \
+             "#{opts.fetch(:reason, "unknown reason")} " \
+             "(reconnect: #{opts.fetch(:reconnect, "<none>")})"
+        close
       in message:
         received(message)
       end

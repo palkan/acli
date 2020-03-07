@@ -1,5 +1,7 @@
 # Change log
 
+- Handle `disconnect` messages. ([@palkan][])
+
 - Add HTTP headers support. ([@palkan][])
 
 - Remove `-m` and add `--quit-after` option. ([@palkan][])

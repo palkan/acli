@@ -1,5 +1,15 @@
 module Acli
   class ClientTest < MTest::Unit::TestCase
+    class FakeSocket
+      def close
+        @closed = true
+      end
+
+      def closed?
+        @closed
+      end
+    end
+
     def test_handle_incoming_ping
       client = Client.new("", nil)
 
@@ -25,6 +35,15 @@ module Acli
       client.handle_incoming(%({"type":"confirm_subscription","identifier":"test_channel"}))
 
       assert_equal "test_channel", client.identifier
+    end
+
+    def test_handle_disconnect
+      socket = FakeSocket.new
+      client = Client.new("", socket)
+
+      client.handle_incoming(%({"type":"disconnect","reason":"server_restart", "reconnect": true}))
+
+      assert socket.closed?
     end
 
     def test_unknown_message
