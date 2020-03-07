@@ -30,7 +30,14 @@ module WebSocket
           raise Error, "HTTP Parser error"
         end
       end
-      unless WebSocket.create_accept(key).securecmp(phr.headers.to_h.fetch('sec-websocket-accept'))
+
+      response_headers = phr.headers.to_h
+
+      unless response_headers.key?('sec-websocket-accept')
+        raise Error, "WebSocket upgrade failed"
+      end
+
+      unless WebSocket.create_accept(key).securecmp(response_headers.fetch('sec-websocket-accept'))
         raise Error, "Handshake failure"
       end
     end
