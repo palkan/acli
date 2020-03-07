@@ -115,7 +115,4 @@ namespace :rbnext do
   end
 end
 
-# Do not run Ruby Next on CI
-unless ENV["CI"]
-  Rake::Task["compile"].enhance [:rbnext]
-end
+Rake::Task["compile"].enhance [:rbnext]
