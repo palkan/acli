@@ -49,6 +49,8 @@ if build_targets.include?("Linux-x86_64")
   MRuby::Build.new("Linux-x86_64") do |conf|
     toolchain :gcc
 
+    conf.disable_lock
+
     gem_config(conf)
   end
 end
@@ -56,6 +58,8 @@ end
 if build_targets.include?("Darwin-x86_64")
   MRuby::Build.new("Darwin-x86_64") do |conf|
     toolchain :gcc
+
+    conf.disable_lock
 
     gem_config(conf)
   end
