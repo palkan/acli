@@ -4,10 +4,13 @@ def gem_config(conf)
   # be sure to include this gem (the cli app)
   conf.gem(File.expand_path(File.dirname(__FILE__)))
 
-  libressl_dir = 
+  libressl_dir = ENV["LIBRESSL_DIR"]
+
+  libressl_dir ||=
     if RUBY_PLATFORM =~ /darwin/i
       "/usr/local/opt/libressl"
     else
+      # Our docker image default
       "/home/mruby/opt/libressl"
     end
 
@@ -32,13 +35,6 @@ end
 
 build_targets = ENV.fetch("BUILD_TARGET", "").split(",")
 
-if build_targets == %w(all)
-  build_targets = %w(
-    linux-x86_64
-    darwin-x86_64
-  )
-end
-
 MRuby::Build.new do |conf|
   toolchain :clang
 
@@ -49,17 +45,21 @@ MRuby::Build.new do |conf|
   gem_config(conf)
 end
 
-if build_targets.include?("linux-x86_64")
-  MRuby::Build.new("linux-x86_64") do |conf|
+if build_targets.include?("Linux-x86_64")
+  MRuby::Build.new("Linux-x86_64") do |conf|
     toolchain :gcc
+
+    conf.disable_lock
 
     gem_config(conf)
   end
 end
 
-if build_targets.include?("darwin-x86_64")
-  MRuby::Build.new("macos-x86_64") do |conf|
+if build_targets.include?("Darwin-x86_64")
+  MRuby::Build.new("Darwin-x86_64") do |conf|
     toolchain :gcc
+
+    conf.disable_lock
 
     gem_config(conf)
   end

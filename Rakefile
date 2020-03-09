@@ -2,7 +2,7 @@ require "fileutils"
 
 MRUBY_VERSION = "2.1.0"
 
-file :mruby do
+task :mruby do
   sh "git clone --branch=#{MRUBY_VERSION} --depth=1 https://github.com/mruby/mruby"
 end
 
@@ -13,7 +13,9 @@ mruby_root = File.expand_path(ENV["MRUBY_ROOT"] || "#{APP_ROOT}/mruby")
 mruby_config = File.expand_path(ENV["MRUBY_CONFIG"] || "build_config.rb")
 ENV["MRUBY_ROOT"] = mruby_root
 ENV["MRUBY_CONFIG"] = mruby_config
-Rake::Task[:mruby].invoke unless Dir.exist?(mruby_root)
+
+Rake::Task[:mruby].invoke unless Dir.exist?(File.join(mruby_root, "lib"))
+
 Dir.chdir(mruby_root)
 load "#{mruby_root}/Rakefile"
 
@@ -82,3 +84,35 @@ desc "run mirb"
 task irb: :default do
   exec File.join(mruby_root, "bin", "mirb")
 end
+
+Rake::Task["run"].clear
+
+desc "run compiled binary"
+task run: :compile do
+  args =
+    if (split_index = ARGV.index("--"))
+      ARGV[(split_index+1)..-1]
+    else
+      []
+    end
+
+  sh "bin/acli #{args.join(" ")}"
+end
+
+desc "transpile source code with ruby-next"
+task rbnext: [] do
+  Dir.chdir(APP_ROOT) do
+    sh "ruby-next nextify ./mrblib --no-refine --min-version=2.6 --single-version -V"
+  end
+end
+
+namespace :rbnext do
+  desc "generate core extensions file"
+  task core_ext: [] do
+    Dir.chdir(APP_ROOT) do
+      sh "ruby-next core_ext -o mrblib/acli/core_ext.rb --name=deconstruct --name=patternerror"
+    end
+  end
+end
+
+Rake::Task["compile"].enhance [:rbnext]

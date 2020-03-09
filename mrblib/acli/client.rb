@@ -1,123 +1,110 @@
 module Acli
   class Client
-    class Error < StandardError; end
-    class ClonnectionClosedError < Error; end
+    attr_reader :identifier, :socket, :commands,
+                :quit_after, :quit_after_messages, :channel_to_subscribe,
+                :connected, :url
 
-    MESSAGE_TYPES = {
-      "welcome" => "print_welcome",
-      "ping" => "track_ping",
-      "confirm_subscription" => "subscribed"
-    }
+    alias connected? connected
 
-    attr_reader :identifier
+    attr_accessor :received_count, :last_ping_at
 
-    def initialize(url, headers = {}, options = {})
-      url = normalize_url(url)
-      @uri = URI.parse(url)
-      @ws = WebSocket::Client.new(protocol(url), @uri.host, @uri.port, @uri.path, tls_config)
+    def initialize(url, socket, channel: nil, quit_after: nil)
+      @url = url
+      @connected = false
+      @socket = socket
       @commands = Commands.new(self)
-      @channel_to_subscribe = options["c"]
-      @msg_limit = options["m"] ? options["m"].to_i : nil
+      @channel_to_subscribe = channel
+
+      parse_quit_after!(quit_after) if quit_after
+
       @received_count = 0
-
-      poll = @ws.instance_variable_get(:@connection).instance_variable_get(:@poll)
-      @stdin_fd = poll.add(STDIN_FILENO, Poll::In)
-
-      while ready_fds = poll.wait
-        ready_fds.each do |ready_fd|
-          if ready_fd == @stdin_fd
-            command = STDIN.gets.chomp
-            handle_command(command) if command.length > 0
-          else
-            handle_frame @ws.recv
-          end
-        end
-      end
-      @ws.close
     end
 
     def handle_command(command)
-      @stdin_fd.events = 0
+      return unless command
+      return unless Commands.is?(command)
 
-      if Commands.is?(command)
-        command_msg = @commands.prepare_command(command)
-        command_msg && @ws.send(command_msg)
+      commands.prepare_command(command).then do |msg|
+        next unless msg
+        socket.send(msg)
       end
-    ensure
-      @stdin_fd.events = Poll::In
-    end
-
-    def handle_frame(frame)
-      if frame.nil?
-        raise ClonnectionClosedError, "Closed abnormally!"
-      end
-
-      if frame.opcode == :connection_close
-        raise ClonnectionClosedError, "Closed with status: #{frame.status_code}"
-      end
-
-      handle_incoming frame.msg if frame.opcode == :text_frame
     end
 
     def close
-      @ws.close
+      socket.close
       exit 0
     end
 
     def handle_incoming(msg)
-      data = JSON.parse(msg)
-      if data.key?("type") && MESSAGE_TYPES.key?(data["type"])
-        self.send(MESSAGE_TYPES[data["type"]], data)
-      else
-        received(data)
+      data = JSON.parse(msg).transform_keys!(&:to_sym)
+      case data
+      in type: "confirm_subscription", identifier:
+        subscribed! identifier
+      in type: "ping"
+        track_ping!
+      in type: "welcome"
+        connected!
+      in type: "disconnect", **opts
+        puts "Disconnected by server: " \
+             "#{opts.fetch(:reason, "unknown reason")} " \
+             "(reconnect: #{opts.fetch(:reconnect, "<none>")})"
+        close
+      in message:
+        received(message)
       end
     end
 
-    def print_welcome(_)
-      puts "Connected to Action Cable at #{@uri}"
-      subscribe if @channel_to_subscribe
+    def connected!
+      @connected = true
+      puts "Connected to Action Cable at #{@url}"
+      quit! if quit_after == "connect"
+      subscribe if channel_to_subscribe
     end
 
-    def track_ping(_ping)
-      @last_ping_at = Time.now
+    def track_ping!
+      self.last_ping_at = Time.now
     end
 
-    def subscribed(msg)
-      @identifier = msg["identifier"]
-      @channel = JSON.parse(@identifier)["channel"]
-      puts "Subscribed to #{@channel} (#{@identifier})"
-      close if @msg_limit && @msg_limit.zero?
+    def subscribed!(identifier)
+      @identifier = identifier
+      channel_name =
+        begin
+          JSON.parse(identifier)["channel"]
+        rescue
+          identifier
+        end
+      puts "Subscribed to #{channel_name}"
+      quit! if quit_after == "subscribed"
     end
 
     def received(msg)
-      puts msg
+      puts msg.to_json
       track_incoming
     end
 
     def subscribe
-      handle_command "\\s #{@channel_to_subscribe}"
+      handle_command "\\s #{channel_to_subscribe}"
     end
 
     def track_incoming
-      @received_count += 1
-      close if @msg_limit && (@msg_limit == @received_count)
+      self.received_count += 1
+      quit! if quit_after == "message" && quit_after_messages == received_count
     end
 
-    # Downcase and prepend with protocol if missing
-    def normalize_url(url)
-      url = url.downcase
-      # Replace ws protocol with http, 'cause URI cannot resolve port for non-HTTP
-      url.sub!("ws", "http")
-      url = "http://#{url}" unless url.start_with?("http")
-      url
+    def quit!
+      puts "Quit."
+      close
     end
 
-    def protocol(url)
-      url.start_with?("https") ? :wss : :ws
-    end
-
-    def tls_config
-      Tls::Config.new(noverify: true)
+    def parse_quit_after!(value)
+      @quit_after =
+        case value
+          in "connect" | "subscribed"
+            value
+          in /\d+/
+            @quit_after_messages = value.to_i
+            "message"
+        end
     end
   end
 end

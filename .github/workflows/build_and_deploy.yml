@@ -1,0 +1,72 @@
+name: Build
+
+on:
+  push:
+    branches:
+    - master
+  pull_request:
+
+jobs:
+  test_linux:
+    runs-on: ubuntu-latest
+    container:
+      image: anycable/acli-dev
+    steps:
+    - uses: actions/checkout@v2
+    - uses: actions/cache@v1
+      with:
+        path: mruby
+        key: mruby-${{ hashFiles('**/Rakefile') }}
+    - name: Install test deps
+      run: gem install childprocess ruby-next
+    - name: Test
+      run: |
+        rake host_clean
+        rake rbnext
+        rake test
+    - name: Build
+      if: contains(github.ref, 'master')
+      env:
+        BUILD_TARGET: Linux-x86_64
+      run: |
+        rake host_clean
+        rake compile
+    - name: Upload linux build
+      if: contains(github.ref, 'master')
+      uses: actions/upload-artifact@v1
+      with:
+        name: acli-Linux-x86_64
+        path: mruby/build/Linux-x86_64/bin/acli
+
+  test_macos:
+    runs-on: macos-latest
+    steps:
+    - uses: actions/checkout@v2
+    - uses: actions/cache@v1
+      with:
+        path: mruby
+        key: mruby-${{ hashFiles('**/Rakefile') }}
+    - name: Install Homebrew
+      run: /bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/master/install.sh)"
+    - name: Install Wslay
+      run: brew install wslay
+    - name: Install Libressl
+      run: brew install libressl
+    - name: Install test deps
+      run: gem install childprocess ruby-next
+    - name: Test
+      run: |
+        rake host_clean
+        rake rbnext
+        rake test
+    - name: Build
+      if: contains(github.ref, 'master')
+      env:
+        BUILD_TARGET: Darwin-x86_64
+      run: make build-macos
+    - name: Upload MacOS build
+      if: contains(github.ref, 'master')
+      uses: actions/upload-artifact@v1
+      with:
+        name: acli-Darwin-x86_64
+        path: mruby/build/Darwin-x86_64/bin/acli

@@ -1,5 +1,13 @@
 # Change log
 
+- Handle `disconnect` messages. ([@palkan][])
+
+- Add HTTP headers support. ([@palkan][])
+
+- Remove `-m` and add `--quit-after` option. ([@palkan][])
+
+- Fix query string support. ([@palkan][])
+
 ## 0.2.0 (2017-06-14)
 
 - Add TLS support. ([@palkan][])

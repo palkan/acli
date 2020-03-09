@@ -2,3 +2,4 @@ mruby/
 dist/
 *.tar.xz
 .mrb
+mrblib/.rbnext

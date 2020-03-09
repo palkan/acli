@@ -13,6 +13,8 @@ module Acli
       str =~ /^\\[\w\?]+\+?/
     end
 
+    attr_reader :client
+
     def initialize(client)
       @client = client
     end
@@ -25,6 +27,9 @@ module Acli
       args << arg if arg && !arg.strip.empty?
       args << parse_kv(options) if options && !options.strip.empty?
       self.send(COMMANDS.fetch(cmd), *args)
+    rescue ArgumentError => e
+      puts "Command failed: #{e.message}"
+      nil
     end
 
     def print_help
@@ -67,7 +72,7 @@ Commands:
 
     def quit
       puts "Good-bye!.."
-      @client.close
+      client.close
       nil
     end
 
