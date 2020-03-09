@@ -22,6 +22,8 @@ Currently only MacOS (x86\_64) and Linux (x86\_64) are supported.
 
 See GitHub [releases](https://github.com/palkan/acli/releases).
 
+You can also find edge (master) builds in [Actions](https://github.com/palkan/acli/actions).
+
 ### Homebrew
 
 TBD
@@ -132,9 +134,13 @@ You can also build the project _locally_ (on MacOS or Linux): `rake compile` or 
 
 ### Requirements
 
+- [Ruby Next](https://github.com/ruby-next/ruby-next) (`gem install ruby-next`)
+
 - [libressl](https://www.libressl.org/) (`brew install libressl`)
 
 - [wslay](https://github.com/tatsuhiro-t/wslay) (`brew install libressl`)
+
+- [childprocess](https://github.com/enkessler/childprocess) gem for testing (`gem install childprocess`)
 
 ## Contributing
 
