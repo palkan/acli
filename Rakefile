@@ -102,7 +102,7 @@ end
 desc "transpile source code with ruby-next"
 task rbnext: [] do
   Dir.chdir(APP_ROOT) do
-    sh "ruby-next nextify ./mrblib --no-refine --min-version=2.6 --single-version"
+    sh "ruby-next nextify ./mrblib --no-refine --min-version=2.6 --single-version -V"
   end
 end
 

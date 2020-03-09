@@ -13,10 +13,16 @@ jobs:
       image: anycable/acli-dev
     steps:
     - uses: actions/checkout@v2
+    - uses: actions/cache@v1
+      with:
+        path: mruby
+        key: mruby-${{ hashFiles('**/Rakefile') }}
     - name: Install test deps
       run: gem install childprocess ruby-next
     - name: Test
       run: |
+        rake host_clean
+        rake rbnext
         rake test
     - name: Build
       if: contains(github.ref, 'master')
@@ -36,6 +42,10 @@ jobs:
     runs-on: macos-latest
     steps:
     - uses: actions/checkout@v2
+    - uses: actions/cache@v1
+      with:
+        path: mruby
+        key: mruby-${{ hashFiles('**/Rakefile') }}
     - name: Install Homebrew
       run: /bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/master/install.sh)"
     - name: Install Wslay
@@ -46,6 +56,8 @@ jobs:
       run: gem install childprocess ruby-next
     - name: Test
       run: |
+        rake host_clean
+        rake rbnext
         rake test
     - name: Build
       if: contains(github.ref, 'master')
