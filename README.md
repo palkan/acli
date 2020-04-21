@@ -1,12 +1,12 @@
-[![Build Status](https://travis-ci.org/palkan/acli.svg?branch=master)](https://travis-ci.org/palkan/acli)
+![Build](https://github.com/palkan/acli/workflows/Build/badge.svg)
 
 # Action Cable CLI
 
-ACLI is Action Cable command line interface written in [mRuby](http://mruby.org).
+ACLI is an Action Cable command-line interface written in [mRuby](http://mruby.org).
 
 It's a standalone binary which can be used:
 
-- In development for palying with Action Cable channels (instead of struggling with browsers)
+- In development for playing with Action Cable channels (instead of struggling with browsers)
 
 - For monitoring and benchmarking.
 
@@ -26,11 +26,11 @@ You can also find edge (master) builds in [Actions](https://github.com/palkan/ac
 
 ### Homebrew
 
-TBD
+Coming soon
 
 ## Usage
 
-ACLI is an interactive tool by design, i.e. it is asking you for input if neccessary.
+ACLI is an interactive tool by design, i.e., it is asking you for input if necessary.
 Just run it without any arguments:
 
 ```sh
@@ -102,7 +102,7 @@ Other commands:
 \q
 ```
 
-Other command line options:
+Other command-line options:
 
 ```sh
 # Print usage
@@ -148,4 +148,4 @@ Bug reports and pull requests are welcome on [GitHub](https://github.com/palkan/
 
 ## License
 
-The gem is available as open source under the terms of the [MIT License](http://opensource.org/licenses/MIT).
+The gem is available as open-source under the terms of the [MIT License](http://opensource.org/licenses/MIT).

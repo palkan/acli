@@ -1,5 +1,7 @@
 # Change log
 
+## 0.3.0 (2020-04-21)
+
 - Handle `disconnect` messages. ([@palkan][])
 
 - Add HTTP headers support. ([@palkan][])
