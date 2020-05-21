@@ -64,6 +64,12 @@ class DemoChannel < ApplicationCable::Channel
   end
 end
 
+class ProtectedChannel < ApplicationCable::Channel
+  def subscribed
+    reject unless params["secret"]
+  end
+end
+
 class EchoChannel < ApplicationCable::Channel
   def subscribed
     stream_from "echo"

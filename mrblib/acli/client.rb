@@ -40,6 +40,8 @@ module Acli
       case data
       in type: "confirm_subscription", identifier:
         subscribed! identifier
+      in type: "reject_subscription", identifier:
+        puts "Subscription rejected"
       in type: "ping"
         track_ping!
       in type: "welcome"

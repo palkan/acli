@@ -136,6 +136,24 @@ assert("subscribes to a channel") do
   end
 end
 
+assert("handles subsciption rejection") do
+  acli = AcliProcess.new("-u", "localhost:8080")
+  acli.running do |process|
+    assert_true process.alive?, "Process failed"
+    assert_include(
+      acli.readline,
+      "Connected to Action Cable"
+    )
+
+    acli.puts '\s ProtectedChannel'
+
+    assert_include(
+      acli.readline,
+      "Subscription rejected"
+    )
+  end
+end
+
 assert("subscribes to a channel with int param") do
   acli = AcliProcess.new("-u", "localhost:8080")
   acli.running do |process|
