@@ -20,7 +20,7 @@ module Acli
     end
 
     def prepare_command(str)
-      m = /^\\([\w\?]+\+?)(?:\s+(\w+))?(.*)/.match(str)
+      m = /^\\([\w\?]+\+?)(?:\s+((?:\w|\:\:)+))?(.*)/.match(str)
       cmd, arg, options = m[1], m[2], m[3]
       return puts "Unknown command: #{cmd}" unless COMMANDS.key?(cmd)
       args = []

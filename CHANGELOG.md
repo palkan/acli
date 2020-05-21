@@ -1,5 +1,9 @@
 # Change log
 
+- Fix using namespaced Ruby classes as channel names. ([@palkan][])
+
+- Handle `reject_subscription` message. ([@palkan][])
+
 ## 0.3.0 (2020-04-21)
 
 - Handle `disconnect` messages. ([@palkan][])

@@ -34,6 +34,14 @@ module Acli
       )
     end
 
+    def test_namespaced_subscribe
+      subject = Commands.new(client)
+      assert_equal(
+        "{\"command\":\"subscribe\",\"identifier\":\"{\\\"id\\\":2,\\\"name\\\":\\\"jack\\\",\\\"channel\\\":\\\"Admin::Chat\\\"}\"}",
+        subject.prepare_command("\\s Admin::Chat id:2 name:'jack'")
+      )
+    end
+
     def test_perform
       subject = Commands.new(client)
       assert_equal(

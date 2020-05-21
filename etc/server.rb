@@ -93,6 +93,11 @@ class EchoChannel < ApplicationCable::Channel
   end
 end
 
+module Namespaced
+  class EchoChannel < ::EchoChannel
+  end
+end
+
 Rails.application.initialize!
 
 Rack::Handler::Puma.run(Rails.application, :Port => 8080)

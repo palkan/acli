@@ -40,6 +40,8 @@ module Acli
     def test_handle_disconnect
       socket = FakeSocket.new
       client = Client.new("", socket)
+      # Avoid exiting, 'cause it halts tests execution
+      client.define_singleton_method(:exit) {|*|}
 
       client.handle_incoming(%({"type":"disconnect","reason":"server_restart", "reconnect": true}))
 

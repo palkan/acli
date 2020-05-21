@@ -200,6 +200,30 @@ assert("subscribes to a channel with string param") do
   end
 end
 
+assert("subscribes to a namespaced channel with params") do
+  acli = AcliProcess.new("-u", "localhost:8080")
+  acli.running do |process|
+    assert_true process.alive?, "Process failed"
+    assert_include(
+      acli.readline,
+      "Connected to Action Cable"
+    )
+
+    acli.puts '\s Namespaced::EchoChannel param:1 p_a_m:"str"'
+
+    assert_include(
+      acli.readline,
+      "Subscribed to Namespaced::EchoChannel"
+    )
+
+    acli.puts '\p echo_params'
+    assert_include(
+      acli.readline,
+      {param: 1, p_a_m: "str"}.to_json
+    )
+  end
+end
+
 assert("performs action") do
   acli = AcliProcess.new("-u", "localhost:8080", "--channel", "EchoChannel")
   acli.running do |process|
