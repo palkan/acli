@@ -1,5 +1,9 @@
 # Change log
 
+- Add `--channel-params` option. ([@palkan][])
+
+Now you can connect and subscribe to a parameterized channel via a single command.
+
 - Fix using namespaced Ruby classes as channel names. ([@palkan][])
 
 - Handle `reject_subscription` message. ([@palkan][])

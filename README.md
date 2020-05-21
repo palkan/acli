@@ -84,7 +84,11 @@ acli --url=http://example.com/cable --channel=channel_name
 acli -u example.com
 ```
 
-NOTE: you can not pass channels params via command-line options.
+To pass channel params use `--channel-params` option:
+
+```sh
+acli -u http://example.com/cable -c ChatChannel --channel-params=id:1,name:"Jack"
+```
 
 You can pass additional request headers:
 

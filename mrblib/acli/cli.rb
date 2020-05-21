@@ -41,6 +41,8 @@ Options:
   -u, --url             # URL to connect
   -c, --channel         # Channel to subscribe to
 
+  --channel-params      # Channel subscription params in a form "<k>:<v>" separated by ","
+
   --headers             # Additional HTTP headers in a form "<k>:<v>" separated by ","
                         # Example: `--headers="x-api-token:secret,cookie:user_id=26"`
                         # NOTE: the value should not contain whitespaces.
@@ -63,7 +65,7 @@ Options:
 
     def parse_options(argv)
       class << argv; include Getopts; end
-      argv.getopts("vhu:c:", "url:", "channel:", "headers:", "quit-after:").yield_self do |opts|
+      argv.getopts("vhu:c:", "url:", "channel:", "channel-params:", "headers:", "quit-after:").yield_self do |opts|
         print_version if opts["v"]
         print_help if opts["h"]
 
@@ -72,9 +74,15 @@ Options:
             opts["headers"].split(",")
           end
 
+        channel = opts["c"] || opts["channel"]
+
+        if !channel.empty? && !opts["channel-params"].empty?
+          channel = "#{channel} #{opts["channel-params"].gsub(",", " ")}"
+        end
+
         {
           url: opts["u"] || opts["url"],
-          channel: opts["c"] || opts["channel"],
+          channel: channel,
           quit_after: opts["quit-after"],
           headers: headers
         }.tap { |data| data.delete_if { _2.empty? } }
