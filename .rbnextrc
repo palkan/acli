@@ -1,0 +1,10 @@
+nextify: |
+  ./mrblib
+  --no-refine
+  --min-version=2.6
+  --single-version
+  --transpile-mode=rewrite
+
+core_ext: |
+  --name=deconstruct
+  --name=patternerror
