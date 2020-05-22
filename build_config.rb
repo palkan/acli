@@ -52,6 +52,11 @@ if build_targets.include?("Linux-x86_64")
     conf.disable_lock
 
     gem_config(conf)
+
+    conf.cc do |cc|
+      linker.libraries << %w(readline ncurses tls ssl crypto tinfo pthread)
+      linker.flags_before_libraries.unshift("-static")
+    end
   end
 end
 
