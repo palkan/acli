@@ -1,5 +1,9 @@
 # Change log
 
+## master
+
+## 0.3.1 (2020-06-30)
+
 - Add `--channel-params` option. ([@palkan][])
 
 Now you can connect and subscribe to a parameterized channel via a single command.
