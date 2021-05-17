@@ -10,11 +10,6 @@ builds:
       branch: master
       commit: '054699892b0d681110e7348440cddb70a3fd671e'
       version: 0.0.0
-    https://github.com/iij/mruby-regexp-pcre.git:
-      url: https://github.com/iij/mruby-regexp-pcre.git
-      branch: master
-      commit: a961225c0953dd2bd987111f0836821573616de2
-      version: 0.0.0
     https://github.com/Asmod4n/mruby-uri-parser.git:
       url: https://github.com/Asmod4n/mruby-uri-parser.git
       branch: master
