@@ -1,6 +1,6 @@
 require "fileutils"
 
-MRUBY_VERSION = "2.1.0"
+MRUBY_VERSION = "3.0.0"
 
 task :mruby do
   sh "git clone --branch=#{MRUBY_VERSION} --depth=1 https://github.com/mruby/mruby"
@@ -26,44 +26,9 @@ task compile: [:all] do
   end
 end
 
-namespace :test do
-  desc "run mruby & unit tests"
-  # only build mtest for host
-  task mtest: :compile do
-    # in order to get mruby/test/t/synatx.rb __FILE__ to pass,
-    # we need to make sure the tests are built relative from mruby_root
-    MRuby.each_target do |target|
-      # only run unit tests here
-      target.enable_bintest = false
-      run_test if target.test_enabled?
-    end
-  end
-
-  def clean_env(envs)
-    old_env = {}
-    envs.each do |key|
-      old_env[key] = ENV[key]
-      ENV[key] = nil
-    end
-    yield
-    envs.each do |key|
-      ENV[key] = old_env[key]
-    end
-  end
-
-  desc "run integration tests"
-  task bintest: :compile do
-    MRuby.each_target do |target|
-      clean_env(%w(MRUBY_ROOT MRUBY_CONFIG)) do
-        run_bintest if target.bintest_enabled?
-      end
-    end
-  end
-end
-
-desc "run all tests"
 Rake::Task["test"].clear
-task test: ["test:bintest", "test:mtest"]
+desc "run all tests"
+task test: ["nextify", "test:build:lib", "test:run:lib", "test:run:bin"]
 
 desc "cleanup"
 task :clean do
@@ -100,7 +65,7 @@ task run: :compile do
 end
 
 desc "transpile source code with ruby-next"
-task rbnext: [] do
+task :nextify do
   Dir.chdir(APP_ROOT) do
     sh "ruby-next nextify -V"
   end
@@ -115,4 +80,4 @@ namespace :rbnext do
   end
 end
 
-Rake::Task["compile"].enhance [:rbnext]
+Rake::Task[:gensym].enhance [:nextify]

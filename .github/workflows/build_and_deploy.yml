@@ -17,13 +17,14 @@ jobs:
     - uses: actions/cache@v1
       with:
         path: mruby
-        key: mruby-${{ hashFiles('**/Rakefile') }}
+        key: mruby3-${{ hashFiles('**/build_config.rb.lock') }}
+        restore-keys: |
+          mruby3-
     - name: Install test deps
       run: gem install childprocess ruby-next
     - name: Test
       run: |
         rake host_clean
-        rake rbnext
         rake test
     - name: Build
       if: contains(github.ref, 'master')
@@ -46,7 +47,9 @@ jobs:
     - uses: actions/cache@v1
       with:
         path: mruby
-        key: mruby-${{ hashFiles('**/Rakefile') }}
+        key: mruby3-${{ hashFiles('**/build_config.rb.lock') }}
+        restore-keys: |
+          mruby3-
     - name: Install Homebrew
       run: /bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/master/install.sh)"
     - name: Install Wslay
@@ -58,7 +61,6 @@ jobs:
     - name: Test
       run: |
         rake host_clean
-        rake rbnext
         rake test
     - name: Build
       if: contains(github.ref, 'master')

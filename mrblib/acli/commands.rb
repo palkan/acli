@@ -86,7 +86,7 @@ Commands:
     end
 
     def parse_kv(str)
-      str.scan(/(\w+)\s*:\s*([^\s\:]*)/).each_with_object({}) do |kv, acc|
+      str.scan(/(\w+)\s*:\s*([^\s\:]*)/).each.with_object({}) do |kv, acc|
         k, v = kv[0], kv[1]
         acc[k] = Utils.serialize(v)
       end

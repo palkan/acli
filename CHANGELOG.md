@@ -2,6 +2,8 @@
 
 ## master
 
+- Upgrade to mruby 3.0. ([@palkan][])
+
 ## 0.3.1 (2020-06-30)
 
 - Add `--channel-params` option. ([@palkan][])
