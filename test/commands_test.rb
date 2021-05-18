@@ -14,6 +14,10 @@ module Acli
       def closed?
         @closed == true
       end
+
+      def coder
+        Coders::JSON
+      end
     end
 
     def client
