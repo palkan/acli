@@ -8,6 +8,10 @@ module Acli
       def self.decode(str)
         ::JSON.parse(str)
       end
+
+      def self.frame_format
+        :text_frame
+      end
     end
 
     module Msgpack
@@ -17,6 +21,10 @@ module Acli
 
       def self.decode(str)
         MessagePack.unpack(str)
+      end
+
+      def self.frame_format
+        :binary_frame
       end
     end
   end

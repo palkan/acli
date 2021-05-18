@@ -21,13 +21,17 @@ module Acli
       @received_count = 0
     end
 
+    def frame_format
+      coder.frame_format
+    end
+
     def handle_command(command)
       return unless command
       return unless Commands.is?(command)
 
       commands.prepare_command(command).then do |msg|
         next unless msg
-        socket.send(msg)
+        socket.send(msg, frame_format)
       end
     end
 
@@ -37,7 +41,8 @@ module Acli
     end
 
     def handle_incoming(msg)
-      data = coder.decode(msg).transform_keys!(&:to_sym)
+      data = coder.decode(msg)
+      data = data.transform_keys!(&:to_sym)
       case data
       in type: "confirm_subscription", identifier:
         subscribed! identifier

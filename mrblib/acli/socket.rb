@@ -42,7 +42,7 @@ module Acli
         raise Acli::ClonnectionClosedError, "Closed with status: #{frame.status_code}"
       end
 
-      frame.msg if frame.opcode == :text_frame
+      frame.msg if frame.opcode == :text_frame || frame.opcode == :binary_frame
     end
 
     def close(status_code = :normal_closure, reason = nil, timeout = -1)

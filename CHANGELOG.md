@@ -2,6 +2,8 @@
 
 ## master
 
+- Add Msgpack support (`--msgpack`). ([@palkan][])
+
 - Add WS sub-protocols support. ([@palkan][])
 
 - Upgrade to mruby 3.0. ([@palkan][])
