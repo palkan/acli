@@ -1,6 +1,6 @@
 module WebSocket
   class WsConnection
-    attr_accessor :custom_headers
+    attr_accessor :custom_headers, :protocol
 
     def http_handshake
       key = WebSocket.create_key
@@ -13,6 +13,7 @@ module WebSocket
         "Sec-WebSocket-Key: #{key}"
       ]
 
+      headers << "Sec-WebSocket-Protocol: #{protocol}" if protocol
       headers += custom_headers if custom_headers
 
       headers_str = headers.join("\r\n")
@@ -35,6 +36,10 @@ module WebSocket
 
       unless response_headers.key?('sec-websocket-accept')
         raise Error, "WebSocket upgrade failed"
+      end
+
+      if protocol && response_headers['sec-websocket-protocol'] != protocol
+        raise Error, "Couldn't negotiate the right subprotocol. Expected #{protocol}, got #{response_headers['sec-websocket-protocol']}"
       end
 
       unless WebSocket.create_accept(key).securecmp(response_headers.fetch('sec-websocket-accept'))

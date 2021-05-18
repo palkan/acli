@@ -24,6 +24,7 @@ jobs:
       run: gem install childprocess ruby-next
     - name: Test
       run: |
+        rake nextify
         rake host_clean
         rake test
     - name: Build
@@ -60,6 +61,7 @@ jobs:
       run: gem install childprocess ruby-next
     - name: Test
       run: |
+        rake nextify
         rake host_clean
         rake test
     - name: Build
