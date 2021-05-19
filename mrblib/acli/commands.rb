@@ -19,6 +19,10 @@ module Acli
       @client = client
     end
 
+    def coder
+      client.coder
+    end
+
     def prepare_command(str)
       m = /^\\([\w\?]+\+?)(?:\s+((?:\w|\:\:)+))?(.*)/.match(str)
       cmd, arg, options = m[1], m[2], m[3]
@@ -50,7 +54,7 @@ Commands:
 
     def subscribe(channel, params = {})
       params["channel"] = channel
-      { "command" => "subscribe", "identifier" => params.to_json }.to_json
+      coder.encode({ "command" => "subscribe", "identifier" => params.to_json })
     end
 
     def isubscribe(channel = nil, params = {})
@@ -61,7 +65,7 @@ Commands:
 
     def perform(action, params = {})
       data = params.merge(action: action)
-      { "command" => "message", "identifier" => @client.identifier, "data" => data.to_json }.to_json
+      coder.encode({ "command" => "message", "identifier" => @client.identifier, "data" => data.to_json })
     end
 
     def iperform(action = nil, params = {})
@@ -86,7 +90,7 @@ Commands:
     end
 
     def parse_kv(str)
-      str.scan(/(\w+)\s*:\s*([^\s\:]*)/).each_with_object({}) do |kv, acc|
+      str.scan(/(\w+)\s*:\s*([^\s\:]*)/).each.with_object({}) do |kv, acc|
         k, v = kv[0], kv[1]
         acc[k] = Utils.serialize(v)
       end

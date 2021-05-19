@@ -16,7 +16,7 @@ module Acli
       uri.instance_variable_set(:@path, DEFAULT_CABLE_PATH) if uri.path.nil? || uri.path.empty?
 
       poller = Poller.new
-      socket = Socket.new(uri, @options.delete(:headers))
+      socket = Socket.new(uri, @options.delete(:headers), @options.delete(:protocol))
       client = Client.new(Utils.uri_to_ws_s(uri), socket, **@options)
 
       poller.add_client(client)
@@ -47,6 +47,10 @@ Options:
                         # Example: `--headers="x-api-token:secret,cookie:user_id=26"`
                         # NOTE: the value should not contain whitespaces.
 
+  --sub-protocol        # Custom WebSocket subprotocol
+
+  --msgpack             # Provide this switch to use Msgpack encoded messages for communication
+
   --quit-after          # Automatically quit after an even occured.
                         # Possible values are:
                         #  - connected — quit right after successful connection ("welcome" message)
@@ -65,7 +69,16 @@ Options:
 
     def parse_options(argv)
       class << argv; include Getopts; end
-      argv.getopts("vhu:c:", "url:", "channel:", "channel-params:", "headers:", "quit-after:").yield_self do |opts|
+      argv.getopts(
+        "vhu:c:",
+        "url:",
+        "channel:",
+        "channel-params:",
+        "headers:",
+        "sub-protocol:",
+        "quit-after:",
+        "msgpack"
+      ).yield_self do |opts|
         print_version if opts["v"]
         print_help if opts["h"]
 
@@ -80,12 +93,19 @@ Options:
           channel = "#{channel} #{opts["channel-params"].gsub(",", " ")}"
         end
 
+        if opts["msgpack"]
+          opts["sub-protocol"] = "actioncable-v1-msgpack" if opts["sub-protocol"].empty?
+          opts[:coder] = Coders::Msgpack
+        end
+
         {
           url: opts["u"] || opts["url"],
           channel: channel,
           quit_after: opts["quit-after"],
-          headers: headers
-        }.tap { |data| data.delete_if { _2.empty? } }
+          headers: headers,
+          protocol: opts["sub-protocol"],
+          coder: opts[:coder]
+        }.tap { |data| data.delete_if { _2.nil? || (_2.is_a?(String) && _2.empty?) } }
       end
     end
   end

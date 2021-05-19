@@ -1,9 +1,10 @@
 nextify: |
   ./mrblib
   --no-refine
-  --min-version=2.6
+  --rewrite=pattern-matching
   --single-version
   --transpile-mode=rewrite
+  --proposed
 
 core_ext: |
   --name=deconstruct

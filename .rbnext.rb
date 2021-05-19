@@ -2,7 +2,7 @@ module MRubyNext
   refine MRuby::Gem::Specification do
     # Add transpiled files to the list of Ruby files instead of source files
     def setup_ruby_next!(next_dir: ".rbnext")
-      lib_root = File.join(@dir, @mrblib_dir)
+      lib_root = File.join(@dir, "mrblib")
 
       next_root = Pathname.new(next_dir).absolute? ? next_dir : File.join(lib_root, next_dir)
 

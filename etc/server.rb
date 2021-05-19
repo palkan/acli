@@ -80,11 +80,11 @@ class EchoChannel < ApplicationCable::Channel
   end
 
   def echo(data)
-    transmit pong: data.without("action")
+    transmit({pong: data.without("action")})
   end
 
   def echo_token
-    transmit token: token
+    transmit({token: token})
   end
 
   def echo_headers

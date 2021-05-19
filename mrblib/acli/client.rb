@@ -2,22 +2,27 @@ module Acli
   class Client
     attr_reader :identifier, :socket, :commands,
                 :quit_after, :quit_after_messages, :channel_to_subscribe,
-                :connected, :url
+                :connected, :url, :coder
 
     alias connected? connected
 
     attr_accessor :received_count, :last_ping_at
 
-    def initialize(url, socket, channel: nil, quit_after: nil)
+    def initialize(url, socket, channel: nil, quit_after: nil, coder: Coders::JSON)
       @url = url
       @connected = false
       @socket = socket
       @commands = Commands.new(self)
       @channel_to_subscribe = channel
+      @coder = coder
 
       parse_quit_after!(quit_after) if quit_after
 
       @received_count = 0
+    end
+
+    def frame_format
+      coder.frame_format
     end
 
     def handle_command(command)
@@ -26,7 +31,7 @@ module Acli
 
       commands.prepare_command(command).then do |msg|
         next unless msg
-        socket.send(msg)
+        socket.send(msg, frame_format)
       end
     end
 
@@ -36,7 +41,8 @@ module Acli
     end
 
     def handle_incoming(msg)
-      data = JSON.parse(msg).transform_keys!(&:to_sym)
+      data = coder.decode(msg)
+      data = data.transform_keys!(&:to_sym)
       case data
       in type: "confirm_subscription", identifier:
         subscribed! identifier
