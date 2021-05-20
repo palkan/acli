@@ -2,6 +2,8 @@
 
 ## master
 
+## 0.4.0 (2021-05-20)
+
 - Add Msgpack support (`--msgpack`). ([@palkan][])
 
 - Add WS sub-protocols support. ([@palkan][])
