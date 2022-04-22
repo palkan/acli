@@ -2,6 +2,10 @@
 
 ## master
 
+- Add history (`\h`) command. ([@palkan][])
+
+The history command only allows to fetch messages from the specified time.
+
 ## 0.4.0 (2021-05-20)
 
 - Add Msgpack support (`--msgpack`). ([@palkan][])

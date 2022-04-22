@@ -70,6 +70,15 @@ Subscribed to channel_name
 
 # or interactively (the same way as \s+)
 \p+
+
+
+# Retrieving the channel's history since the specified time
+
+# Relative, for example, 10 minutes ago ("h" and "s" modifiers are also supported)
+\h since:10m
+
+# Absolute since the UTC time (seconds)
+\h since:1650634535
 ```
 
 You can also provide URL and channel info using CLI options:

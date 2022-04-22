@@ -53,6 +53,30 @@ module Acli
         subject.prepare_command("\\p speak message:\"Hello!\" sid:123")
       )
     end
+
+    def test_history_ago
+      subject = Commands.new(client)
+
+      now_i = Time.now.to_i
+      now_i_10m = now_i - 10 * 60
+
+      command_str = subject.prepare_command("\\h since:10m")
+
+      command = JSON.parse(command_str)
+
+      assert_equal("history", command.fetch("command"))
+
+      assert(command.fetch("history").fetch("since") >= now_i_10m)
+      assert(command.fetch("history").fetch("since") < now_i_10m + 5)
+    end
+
+    def test_history_int
+      subject = Commands.new(client)
+      assert_equal(
+        "{\"command\":\"history\",\"identifier\":\"test\",\"history\":{\"since\":1650634535}}",
+        subject.prepare_command("\\h since:1650634535")
+      )
+    end
   end
 end
 

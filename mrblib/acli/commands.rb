@@ -5,6 +5,7 @@ module Acli
       "s+" => "isubscribe",
       "p" => "perform",
       "p+" => "iperform",
+      "h" => "history",
       "?" => "print_help",
       "q" => "quit"
     }
@@ -24,11 +25,11 @@ module Acli
     end
 
     def prepare_command(str)
-      m = /^\\([\w\?]+\+?)(?:\s+((?:\w|\:\:)+))?(.*)/.match(str)
+      m = /^\\([\w\?]+\+?)(?:\s+((?:\w|\:\:)+(?:$|[^\:]\s)))?(.*)/.match(str)
       cmd, arg, options = m[1], m[2], m[3]
       return puts "Unknown command: #{cmd}" unless COMMANDS.key?(cmd)
       args = []
-      args << arg if arg && !arg.strip.empty?
+      args << arg.strip if arg && !arg.strip.empty?
       args << parse_kv(options) if options && !options.strip.empty?
       self.send(COMMANDS.fetch(cmd), *args)
     rescue ArgumentError => e
@@ -46,6 +47,8 @@ Commands:
 
   \\p action [params]       # Perform action
   \\p+ [action] [params]    # Interactive version of perform action
+
+  \\h since                 # Request message history since the specified time (UTC timestamp or string)
 
   \\q                       # Exit
   \\?                       # Print this help
@@ -74,6 +77,21 @@ Commands:
       perform(action, params)
     end
 
+    def history(params = {})
+      raise ArgumentError, 'History command has a form: \\h since:<interval or timestamp>' unless params.is_a?(Hash)
+
+      since = params&.fetch("since") { raise ArgumentError, "Since argument is required" }
+      ts = nil
+
+      begin
+        ts = Integer(since)
+      rescue ArgumentError
+        ts = parse_relative_time(since)
+      end
+
+      coder.encode({ "command" => "history", "identifier" => @client.identifier, "history" => { "since" => ts } })
+    end
+
     def quit
       puts "Good-bye!.."
       client.close
@@ -93,6 +111,25 @@ Commands:
       str.scan(/(\w+)\s*:\s*([^\s\:]*)/).each.with_object({}) do |kv, acc|
         k, v = kv[0], kv[1]
         acc[k] = Utils.serialize(v)
+      end
+    end
+
+    def parse_relative_time(str)
+      ts = Time.now.to_i
+
+      val, precision = str[0..-2], str[-1..-1]
+
+      val = Integer(val)
+
+      case precision
+      when "s"
+        ts -= val
+      when "m"
+        ts -= (val * 60)
+      when "h"
+        ts -= (val * 60 * 60)
+      else
+        raise ArgumentError, "Unknown relative time: #{str}"
       end
     end
   end

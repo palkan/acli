@@ -50,8 +50,8 @@ module Acli
         puts "Subscription rejected"
       in type: "ping"
         track_ping!
-      in type: "welcome"
-        connected!
+      in type: "welcome", **opts
+        connected!(opts)
       in type: "disconnect", **opts
         puts "Disconnected by server: " \
              "#{opts.fetch(:reason, "unknown reason")} " \
@@ -62,9 +62,10 @@ module Acli
       end
     end
 
-    def connected!
+    def connected!(opts)
       @connected = true
       puts "Connected to Action Cable at #{@url}"
+      puts "Session ID: #{opts[:sid]}#{opts[:restored] ? ' (restored)' : ''}" if opts[:sid]
       quit! if quit_after == "connect"
       subscribe if channel_to_subscribe
     end
