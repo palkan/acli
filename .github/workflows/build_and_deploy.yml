@@ -21,7 +21,9 @@ jobs:
         restore-keys: |
           mruby3-
     - name: Install test deps
-      run: gem install childprocess ruby-next
+      run: |
+        gem install unparser -v 0.6.4
+        gem install childprocess ruby-next
     - name: Test
       run: |
         rake nextify
