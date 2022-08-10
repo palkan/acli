@@ -2,6 +2,8 @@
 
 ## master
 
+## 0.4.1 (2022-08-10)
+
 - Add history (`\h`) command. ([@palkan][])
 
 The history command only allows to fetch messages from the specified time.
