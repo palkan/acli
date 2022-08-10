@@ -1,9 +1,11 @@
+HOMEBREW_PREFIX ?= "/usr/local"
+
 build-macos:
 	rake host_clean
-	mkdir -p /usr/local/opt/libressl/lib/dylibs
-	(cd /usr/local/opt/libressl/lib && ls | grep .dylib | xargs -I@ mv /usr/local/opt/libressl/lib/@ /usr/local/opt/libressl/lib/dylibs/@)
+	mkdir -p $(HOMEBREW_PREFIX)/opt/libressl/lib/dylibs
+	(cd $(HOMEBREW_PREFIX)/opt/libressl/lib && ls | grep .dylib | xargs -I@ mv $(HOMEBREW_PREFIX)/opt/libressl/lib/@ $(HOMEBREW_PREFIX)/opt/libressl/lib/dylibs/@)
 	BUILD_TARGET=Darwin-x86_64 rake compile
-	(cd /usr/local/opt/libressl/lib/dylibs && ls | grep .dylib | xargs -I@ mv /usr/local/opt/libressl/lib/dylibs/@ /usr/local/opt/libressl/lib/@)
+	(cd $(HOMEBREW_PREFIX)/opt/libressl/lib/dylibs && ls | grep .dylib | xargs -I@ mv $(HOMEBREW_PREFIX)/opt/libressl/lib/dylibs/@ $(HOMEBREW_PREFIX)/opt/libressl/lib/@)
 
 ACLI_VERSION := $(shell sh -c 'cat .dockerdev/docker-compose.yml | grep "acli-dev" | sed "s/    image: palkan\/acli-dev://"')
 

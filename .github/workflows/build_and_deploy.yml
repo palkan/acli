@@ -53,10 +53,8 @@ jobs:
           mruby3-
     - name: Install Homebrew
       run: /bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/master/install.sh)"
-    - name: Install Wslay
-      run: brew install wslay
-    - name: Install Libressl
-      run: brew install libressl
+    - name: Install deps
+      run: brew bundle
     - name: Install test deps
       run: gem install childprocess ruby-next
     - name: Test

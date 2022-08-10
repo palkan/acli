@@ -8,7 +8,7 @@ def gem_config(conf)
 
   libressl_dir ||=
     if RUBY_PLATFORM =~ /darwin/i
-      "/usr/local/opt/libressl"
+      "#{ENV["HOMEBREW_PREFIX"] || "/usr/local" }/opt/libressl"
     else
       # Our docker image default
       "/home/mruby/opt/libressl"
