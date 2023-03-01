@@ -21,8 +21,7 @@ module Acli
     end
 
     def test_normalize_url
-      assert_equal "http://example.com?q=1", Utils.normalize_url("EXAMPLE.COM?q=1")
-      assert_equal "http://example.com?q=1", Utils.normalize_url("ws://example.com?q=1")
+      assert_equal "http://example.com?q=BLa-bLA", Utils.normalize_url("ws://example.com?q=BLa-bLA")
       assert_equal "http://example.com?q=1", Utils.normalize_url("http://example.com?q=1")
       assert_equal "https://example.com?q=1", Utils.normalize_url("wss://example.com?q=1")
     end

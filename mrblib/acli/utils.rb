@@ -31,7 +31,6 @@ module Acli
 
     # Downcase and prepend with protocol if missing
     def normalize_url(url)
-      url = url.downcase
       # Replace ws protocol with http, 'cause URI cannot resolve port for non-HTTP
       url.sub!("ws", "http")
       url = "http://#{url}" unless url.start_with?("http")

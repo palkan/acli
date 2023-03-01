@@ -2,6 +2,8 @@
 
 ## master
 
+- Fix URL normalization (do not downcase, 'cause it can break query parameters). ([@palkan][])
+
 ## 0.4.1 (2022-08-10)
 
 - Add history (`\h`) command. ([@palkan][])
