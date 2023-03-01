@@ -15,12 +15,17 @@ It's a standalone binary which can be used:
 
 ## Installation
 
-Currently only MacOS (x86\_64) and Linux (x86\_64) are supported.
+Currently only MacOS (x86\_64 and ARM) and Linux (x86\_64) are supported.
 **PRs are welcomed** for other platforms support.
 
 ### Precompiled binaries
 
-See GitHub [releases](https://github.com/palkan/acli/releases).
+See GitHub [releases](https://github.com/palkan/acli/releases). You can download the latest release by using cURL:
+
+```sh
+curl -L https://github.com/palkan/acli/releases/latest/download/acli-`uname -s`-`uname -m` > /usr/local/bin/acli
+chmod +x /usr/local/bin/acli
+```
 
 You can also find edge (master) builds in [Actions](https://github.com/palkan/acli/actions).
 
