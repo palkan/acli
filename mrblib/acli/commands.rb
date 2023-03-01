@@ -14,9 +14,10 @@ module Acli
       str =~ /^\\[\w\?]+\+?/
     end
 
-    attr_reader :client
+    attr_reader :client, :logger
 
-    def initialize(client)
+    def initialize(client, logger: NoopLogger.new)
+      @logger = logger
       @client = client
     end
 
@@ -25,12 +26,16 @@ module Acli
     end
 
     def prepare_command(str)
+      logger.log "Preparing command: #{str}"
+
       m = /^\\([\w\?]+\+?)(?:\s+((?:\w|\:\:)+(?:$|[^\:]\s)))?(.*)/.match(str)
       cmd, arg, options = m[1], m[2], m[3]
       return puts "Unknown command: #{cmd}" unless COMMANDS.key?(cmd)
       args = []
       args << arg.strip if arg && !arg.strip.empty?
       args << parse_kv(options) if options && !options.strip.empty?
+
+      logger.log "Parsed command: #{cmd}(#{args})"
       self.send(COMMANDS.fetch(cmd), *args)
     rescue ArgumentError => e
       puts "Command failed: #{e.message}"

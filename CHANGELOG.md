@@ -2,6 +2,8 @@
 
 ## master
 
+- Add `--debug` option to print debug information. ([@palkan][])
+
 - Fix URL normalization (do not downcase, 'cause it can break query parameters). ([@palkan][])
 
 ## 0.4.1 (2022-08-10)

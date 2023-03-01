@@ -5,19 +5,26 @@ module Acli
   class ClonnectionClosedError < Error; end
 
   class Cli
+    attr_reader :logger
+
     def initialize(argv)
       @options = parse_options(argv)
     end
 
     def run
+      @logger = @options.delete(:debug) ? DebugLogger.new : NoopLogger.new
       url = @options.delete(:url) || ask_for_url
+
+      logger.log "Provided URL: #{url}"
 
       uri =  URI.parse(Utils.normalize_url(url))
       uri.instance_variable_set(:@path, DEFAULT_CABLE_PATH) if uri.path.nil? || uri.path.empty?
 
+      logger.log "Normalized URL: #{uri.to_s}"
+
       poller = Poller.new
-      socket = Socket.new(uri, @options.delete(:headers), @options.delete(:protocol))
-      client = Client.new(Utils.uri_to_ws_s(uri), socket, **@options)
+      socket = Socket.new(uri, headers: @options.delete(:headers), protocol: @options.delete(:protocol), logger: logger)
+      client = Client.new(Utils.uri_to_ws_s(uri), socket, **@options, logger: logger)
 
       poller.add_client(client)
 
@@ -57,6 +64,8 @@ Options:
                         #  - subscribed — quit after successful subscription to a channel
                         #  - N (integer) — quit after receiving N incoming messages (excluding pings and system messages)
 
+  --debug               # Display debug information
+
   -v                    # Print version
   -h                    # Print this help
       USAGE
@@ -77,7 +86,8 @@ Options:
         "headers:",
         "sub-protocol:",
         "quit-after:",
-        "msgpack"
+        "msgpack",
+        "debug"
       ).yield_self do |opts|
         print_version if opts["v"]
         print_help if opts["h"]
@@ -104,7 +114,8 @@ Options:
           quit_after: opts["quit-after"],
           headers: headers,
           protocol: opts["sub-protocol"],
-          coder: opts[:coder]
+          coder: opts[:coder],
+          debug: opts.key?("debug"),
         }.tap { |data| data.delete_if { _2.nil? || (_2.is_a?(String) && _2.empty?) } }
       end
     end

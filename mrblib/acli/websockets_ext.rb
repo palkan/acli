@@ -1,6 +1,6 @@
 module WebSocket
   class WsConnection
-    attr_accessor :custom_headers, :protocol
+    attr_accessor :custom_headers, :protocol, :logger
 
     def http_handshake
       key = WebSocket.create_key
@@ -17,6 +17,8 @@ module WebSocket
       headers += custom_headers if custom_headers
 
       headers_str = headers.join("\r\n")
+
+      logger.log "WS Handshake: host=#{@host}:#{@port} path=#{@path} headers=#{headers_str}"
 
       @socket.write("GET #{@path} HTTP/1.1\r\n#{headers_str}\r\n\r\n")
       buf = @socket.recv(16384)

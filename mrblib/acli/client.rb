@@ -2,23 +2,26 @@ module Acli
   class Client
     attr_reader :identifier, :socket, :commands,
                 :quit_after, :quit_after_messages, :channel_to_subscribe,
-                :connected, :url, :coder
+                :connected, :url, :coder, :logger
 
     alias connected? connected
 
     attr_accessor :received_count, :last_ping_at
 
-    def initialize(url, socket, channel: nil, quit_after: nil, coder: Coders::JSON)
+    def initialize(url, socket, channel: nil, quit_after: nil, coder: Coders::JSON, logger: NoopLogger.new)
+      @logger = logger
       @url = url
       @connected = false
       @socket = socket
-      @commands = Commands.new(self)
+      @commands = Commands.new(self, logger: logger)
       @channel_to_subscribe = channel
       @coder = coder
 
       parse_quit_after!(quit_after) if quit_after
 
       @received_count = 0
+
+      logger.log "Client: url=#{url}, channel=#{channel_to_subscribe}, quit_after: #{quit_after}"
     end
 
     def frame_format
@@ -41,6 +44,8 @@ module Acli
     end
 
     def handle_incoming(msg)
+      logger.log "Incoming: #{msg}"
+
       data = coder.decode(msg)
       data = data.transform_keys!(&:to_sym)
       case data
