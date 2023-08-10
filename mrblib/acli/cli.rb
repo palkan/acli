@@ -87,6 +87,7 @@ Options:
         "sub-protocol:",
         "quit-after:",
         "msgpack",
+        "pong",
         "debug"
       ).yield_self do |opts|
         print_version if opts["v"]
@@ -108,6 +109,10 @@ Options:
           opts[:coder] = Coders::Msgpack
         end
 
+        if opts["pong"]
+          opts[:pong] = true
+        end
+
         {
           url: opts["u"] || opts["url"],
           channel: channel,
@@ -115,6 +120,7 @@ Options:
           headers: headers,
           protocol: opts["sub-protocol"],
           coder: opts[:coder],
+          pong: opts[:pong],
           debug: opts.key?("debug"),
         }.tap { |data| data.delete_if { _2.nil? || (_2.is_a?(String) && _2.empty?) } }
       end

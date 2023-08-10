@@ -2,13 +2,13 @@ module Acli
   class Client
     attr_reader :identifier, :socket, :commands,
                 :quit_after, :quit_after_messages, :channel_to_subscribe,
-                :connected, :url, :coder, :logger
+                :connected, :url, :coder, :logger, :pong
 
     alias connected? connected
 
     attr_accessor :received_count, :last_ping_at, :last_seen_stream, :last_seen_epoch
 
-    def initialize(url, socket, channel: nil, quit_after: nil, coder: Coders::JSON, logger: NoopLogger.new)
+    def initialize(url, socket, channel: nil, quit_after: nil, coder: Coders::JSON, pong: false, logger: NoopLogger.new)
       @logger = logger
       @url = url
       @connected = false
@@ -16,6 +16,7 @@ module Acli
       @commands = Commands.new(self, logger: logger)
       @channel_to_subscribe = channel
       @coder = coder
+      @pong = pong
 
       parse_quit_after!(quit_after) if quit_after
 
@@ -81,6 +82,10 @@ module Acli
 
     def track_ping!
       self.last_ping_at = Time.now
+
+      if pong
+        socket.send coder.encode({ "command" => "pong" }), frame_format
+      end
     end
 
     def subscribed!(identifier)

@@ -131,6 +131,9 @@ acli -v
 
 # Quit after M incoming messages (excluding pings and system messages)
 acli -u http://example.com/cable -c channel_name --quit-after=M
+
+# Enabling PONG commands in response to PINGs
+acli -u http://example.com/cable --pong
 ```
 
 ## Development

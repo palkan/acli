@@ -4,6 +4,10 @@
 
 ## 0.6.0 (2023-08-09)
 
+- Support pongs. ([@palkan][])
+
+Enable pongs by providing the `--pong` optipn.
+
 - Show messages meta information (stream ID, offset, etc.). ([@palkan][])
 
 - Add `\h offset:<N>` support.
