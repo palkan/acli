@@ -2,6 +2,10 @@
 
 ## master
 
+- Show messages meta information (stream ID, offset, etc.). ([@palkan][])
+
+- Add `\h offset:<N>` support.
+
 ## 0.5.0 (2023-02-28)
 
 - Add `--debug` option to print debug information. ([@palkan][])

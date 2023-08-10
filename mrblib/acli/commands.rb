@@ -53,7 +53,7 @@ Commands:
   \\p action [params]       # Perform action
   \\p+ [action] [params]    # Interactive version of perform action
 
-  \\h since                 # Request message history since the specified time (UTC timestamp or string)
+  \\h [since | offset]      # Request message history since the specified time (UTC timestamp or string) or offset (for the only stream observed)
 
   \\q                       # Exit
   \\?                       # Print this help
@@ -83,18 +83,40 @@ Commands:
     end
 
     def history(params = {})
-      raise ArgumentError, 'History command has a form: \\h since:<interval or timestamp>' unless params.is_a?(Hash)
+      raise ArgumentError, 'History command has a form: \\h since:<interval or timestamp> or \\h offset:<number>' unless params.is_a?(Hash)
 
-      since = params&.fetch("since") { raise ArgumentError, "Since argument is required" }
-      ts = nil
+      since = params&.fetch("since", nil)
+      offset = params&.fetch("offset", nil)
 
-      begin
-        ts = Integer(since)
-      rescue ArgumentError
-        ts = parse_relative_time(since)
+      raise ArgumentError, "Since or offset argument is required" unless since || offset
+
+      if offset
+        raise ArgumentError, "No streams were observed" unless @client.last_seen_stream
+
+        coder.encode({
+          "command" => "history",
+          "identifier" => @client.identifier,
+          "history" =>
+          {
+            "streams" => {
+              @client.last_seen_stream => {
+                "offset" => Integer(offset),
+                "epoch" => @client.last_seen_epoch
+              }
+            }
+          }
+        })
+      else
+        ts = nil
+
+        begin
+          ts = Integer(since)
+        rescue ArgumentError
+          ts = parse_relative_time(since)
+        end
+
+        coder.encode({ "command" => "history", "identifier" => @client.identifier, "history" => { "since" => ts } })
       end
-
-      coder.encode({ "command" => "history", "identifier" => @client.identifier, "history" => { "since" => ts } })
     end
 
     def quit

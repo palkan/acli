@@ -6,7 +6,7 @@ module Acli
 
     alias connected? connected
 
-    attr_accessor :received_count, :last_ping_at
+    attr_accessor :received_count, :last_ping_at, :last_seen_stream, :last_seen_epoch
 
     def initialize(url, socket, channel: nil, quit_after: nil, coder: Coders::JSON, logger: NoopLogger.new)
       @logger = logger
@@ -53,6 +53,10 @@ module Acli
         subscribed! identifier
       in type: "reject_subscription", identifier:
         puts "Subscription rejected"
+      in type: "confirm_history", identifier:
+        # no-op
+      in type: "reject_history", identifier:
+        puts "Failed to retrieve history"
       in type: "ping"
         track_ping!
       in type: "welcome", **opts
@@ -62,8 +66,8 @@ module Acli
              "#{opts.fetch(:reason, "unknown reason")} " \
              "(reconnect: #{opts.fetch(:reconnect, "<none>")})"
         close
-      in message:
-        received(message)
+      in message:, identifier:, **meta
+        received(message, meta)
       end
     end
 
@@ -91,9 +95,21 @@ module Acli
       quit! if quit_after == "subscribed"
     end
 
-    def received(msg)
-      puts msg.to_json
+    def received(msg, meta)
+      puts msg.to_json + format_meta(meta)
+
+      if meta[:stream_id]
+        self.last_seen_stream = meta[:stream_id]
+        self.last_seen_epoch = meta[:epoch]
+      end
+
       track_incoming
+    end
+
+    def format_meta(meta)
+      return "" if meta.empty?
+
+      " # stream_id=#{meta[:stream_id]} epoch=#{meta[:epoch]} offset=#{meta[:offset]}"
     end
 
     def subscribe

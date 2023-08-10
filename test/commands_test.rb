@@ -2,6 +2,7 @@ module Acli
   class TestCommands < MTest::Unit::TestCase
     class TestClient
       attr_reader :identifier
+      attr_accessor :last_seen_stream, :last_seen_epoch
 
       def initialize(identifier = "test")
         @identifier = identifier
@@ -75,6 +76,17 @@ module Acli
       assert_equal(
         "{\"command\":\"history\",\"identifier\":\"test\",\"history\":{\"since\":1650634535}}",
         subject.prepare_command("\\h since:1650634535")
+      )
+    end
+
+    def test_history_offset
+      client.last_seen_stream = "abc"
+      client.last_seen_epoch = "bc"
+
+      subject = Commands.new(client)
+      assert_equal(
+        "{\"command\":\"history\",\"identifier\":\"test\",\"history\":{\"streams\":{\"abc\":{\"offset\":13,\"epoch\":\"bc\"}}}}",
+        subject.prepare_command("\\h offset:13")
       )
     end
   end
