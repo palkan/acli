@@ -2,6 +2,8 @@
 
 ## master
 
+## 0.6.0 (2023-08-09)
+
 - Show messages meta information (stream ID, offset, etc.). ([@palkan][])
 
 - Add `\h offset:<N>` support.
