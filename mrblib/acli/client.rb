@@ -47,28 +47,30 @@ module Acli
     def handle_incoming(msg)
       logger.log "Incoming: #{msg}"
 
-      data = coder.decode(msg)
-      data = data.transform_keys!(&:to_sym)
-      case data
-      in type: "confirm_subscription", identifier:
-        subscribed! identifier
-      in type: "reject_subscription", identifier:
+      data = coder.decode(msg).transform_keys!(&:to_sym)
+
+      case data[:type]
+      when "confirm_subscription"
+        subscribed! data[:identifier]
+      when "reject_subscription"
         puts "Subscription rejected"
-      in type: "confirm_history", identifier:
+      when "confirm_history"
         # no-op
-      in type: "reject_history", identifier:
+      when "reject_history"
         puts "Failed to retrieve history"
-      in type: "ping"
+      when "ping"
         track_ping!
-      in type: "welcome", **opts
-        connected!(opts)
-      in type: "disconnect", **opts
+      when "welcome"
+        connected!(data)
+      when "disconnect"
         puts "Disconnected by server: " \
-             "#{opts.fetch(:reason, "unknown reason")} " \
-             "(reconnect: #{opts.fetch(:reconnect, "<none>")})"
+             "#{data.fetch(:reason, "unknown reason")} " \
+             "(reconnect: #{data.fetch(:reconnect, "<none>")})"
         close
-      in message:, identifier:, **meta
-        received(message, meta)
+      else
+        if data[:message] && data[:identifier]
+          received(data[:message], data)
+        end
       end
     end
 
@@ -134,11 +136,11 @@ module Acli
     def parse_quit_after!(value)
       @quit_after =
         case value
-          in "connect" | "subscribed"
-            value
-          in /\d+/
-            @quit_after_messages = value.to_i
-            "message"
+        when "connect", "subscribed"
+          value
+        when /\d+/
+          @quit_after_messages = value.to_i
+          "message"
         end
     end
   end
