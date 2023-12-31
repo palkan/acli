@@ -7,22 +7,22 @@ builds:
   host:
     https://github.com/iij/mruby-regexp-pcre.git:
       url: https://github.com/iij/mruby-regexp-pcre.git
-      branch: master
+      branch: HEAD
       commit: 71bd16ba59239f04aefb73bb6d46d5b581f27b1b
       version: 0.0.0
     https://github.com/Asmod4n/mruby-uri-parser.git:
       url: https://github.com/Asmod4n/mruby-uri-parser.git
-      branch: master
+      branch: HEAD
       commit: bbfb475e3125bb7edf50aae110f5d5a64f4e3f6a
       version: 0.0.0
     https://github.com/mttech/mruby-getopts:
       url: https://github.com/mttech/mruby-getopts
-      branch: master
+      branch: HEAD
       commit: 32878292c1162a911b39e1e0810a28ab2cb83f6a
       version: 0.0.0
     https://github.com/Asmod4n/mruby-websockets.git:
       url: https://github.com/Asmod4n/mruby-websockets.git
-      branch: master
+      branch: HEAD
       commit: 9bb66308085acbeb727f8ef21979b7884d8fb322
       version: 0.0.0
     https://github.com/Asmod4n/mruby-simplemsgpack.git:
@@ -32,7 +32,7 @@ builds:
       version: 0.0.0
     https://github.com/iij/mruby-mtest.git:
       url: https://github.com/iij/mruby-mtest.git
-      branch: master
+      branch: HEAD
       commit: 34a477d249b0d21671058be33aa75d04c3e981ba
       version: 0.0.0
     https://github.com/iij/mruby-errno.git:
@@ -42,51 +42,51 @@ builds:
       version: 0.0.0
     https://github.com/Asmod4n/mruby-phr.git:
       url: https://github.com/Asmod4n/mruby-phr.git
-      branch: master
+      branch: HEAD
       commit: a9b5776c5c6926ce30b09aadd5743c34e16ca522
       version: 0.0.0
     https://github.com/Asmod4n/mruby-wslay:
       url: https://github.com/Asmod4n/mruby-wslay
-      branch: master
+      branch: HEAD
       commit: 47fc6c9795399efb4bcf2258a69125afcab00428
       version: 0.0.0
     https://github.com/Asmod4n/mruby-poll.git:
       url: https://github.com/Asmod4n/mruby-poll.git
-      branch: master
-      commit: 867c2a650675dd8278600388ce8f0e64284977e5
+      branch: HEAD
+      commit: 404299c264c183ec4fa65d0f1bdb322ba761c296
       version: 0.0.0
     https://github.com/Asmod4n/mruby-tls.git:
       url: https://github.com/Asmod4n/mruby-tls.git
-      branch: master
+      branch: HEAD
       commit: af809343feb18d11b97d346072e15ab736f1ac3f
       version: 0.0.0
     https://github.com/Asmod4n/mruby-sysrandom.git:
       url: https://github.com/Asmod4n/mruby-sysrandom.git
-      branch: master
+      branch: HEAD
       commit: 75347e898686c8c044b0fa8a76f42ad25daee45c
       version: 0.0.0
     https://github.com/Asmod4n/mruby-b64.git:
       url: https://github.com/Asmod4n/mruby-b64.git
-      branch: master
+      branch: HEAD
       commit: 6d8f36b1bd310aa1b0dccd6fe7b0e9d7551d7718
       version: 0.0.0
     https://github.com/Asmod4n/mruby-secure-compare.git:
       url: https://github.com/Asmod4n/mruby-secure-compare.git
-      branch: master
+      branch: HEAD
       commit: 433a73a483b550ad13e3a9af33707300c1c7822d
       version: 0.0.0
     https://github.com/Asmod4n/mruby-string-is-utf8.git:
       url: https://github.com/Asmod4n/mruby-string-is-utf8.git
-      branch: master
+      branch: HEAD
       commit: 1c639fe845008d437420a61852329a158ddd74b1
       version: 0.0.0
     https://github.com/palkan/mruby-simplemsgpack.git:
       url: https://github.com/palkan/mruby-simplemsgpack.git
-      branch: master
+      branch: HEAD
       commit: 2d908b1c9cdfb5f12319866ef483179be22660ad
       version: 0.0.0
     https://github.com/palkan/mruby-json.git:
       url: https://github.com/palkan/mruby-json.git
-      branch: master
+      branch: HEAD
       commit: 29550959d21f6eea75a26b0e05c1bda0c43f5ef4
       version: 0.0.0
