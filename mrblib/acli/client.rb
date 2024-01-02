@@ -68,9 +68,7 @@ module Acli
              "(reconnect: #{data.fetch(:reconnect, "<none>")})"
         close
       else
-        if data[:message] && data[:identifier]
-          received(data[:message], data)
-        end
+        received(data[:message], data)
       end
     end
 
