@@ -32,6 +32,10 @@ MRuby::Gem::Specification.new("acli") do |spec|
   spec.add_dependency "mruby-wslay", github: "Asmod4n/mruby-wslay", checksum_hash: "47fc6c9795399efb4bcf2258a69125afcab00428"
   spec.add_dependency "mruby-poll", github: "Asmod4n/mruby-poll", checksum_hash: "f33ce28bc3ebb8650d91a0bf31da3e163e29af45"
   spec.add_dependency "mruby-string-is-utf8", github: "Asmod4n/mruby-string-is-utf8", checksum_hash: "1c639fe845008d437420a61852329a158ddd74b1"
+  spec.add_dependency "mruby-phr", github: "Asmod4n/mruby-phr", checksum_hash: "1bab77000280141802d56a20a5413ba0900b69df"
+  spec.add_dependency "mruby-sysrandom", github: "Asmod4n/mruby-sysrandom", checksum_hash: "75347e898686c8c044b0fa8a76f42ad25daee45c"
+  spec.add_dependency "mruby-b64", github: "Asmod4n/mruby-b64", checksum_hash: "6d8f36b1bd310aa1b0dccd6fe7b0e9d7551d7718"
+  spec.add_dependency "mruby-secure-compare", github: "Asmod4n/mruby-secure-compare", checksum_hash: "433a73a483b550ad13e3a9af33707300c1c7822d"
   spec.add_dependency "mruby-websockets", github: "Asmod4n/mruby-websockets", checksum_hash: "9bb66308085acbeb727f8ef21979b7884d8fb322"
   spec.add_dependency "mruby-simplemsgpack", github: "palkan/mruby-simplemsgpack"
 
