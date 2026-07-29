@@ -30,7 +30,6 @@ jobs:
         rake host_clean
         rake test
     - name: Build
-      if: contains(github.ref, 'master')
       env:
         BUILD_TARGET: Linux-x86_64
       run: |
@@ -65,7 +64,6 @@ jobs:
         rake host_clean
         rake test
     - name: Build
-      if: contains(github.ref, 'master')
       env:
         BUILD_TARGET: Darwin-x86_64
       run: make build-macos
